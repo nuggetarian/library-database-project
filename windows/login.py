@@ -25,4 +25,4 @@ class Login():
     emailEntry = ttk.Entry(loginGrid, width=30).grid(row=0, column=1, pady=10)
     passwordLabel = ttk.Label(loginGrid, text="Password: ").grid(row=1, column=0)
     passwordEntry = ttk.Entry(loginGrid, width=30, show="*").grid(row=1, column=1)
-    loginButton = ttk.Button(window, text="Login", style='success.TButton').pack()
+    loginButton = ttk.Button(window, text="Login", style='danger.TButton').pack()
