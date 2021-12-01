@@ -50,6 +50,6 @@ pip install bcrypt
   - readme ako spustiť
 
 - License file (MIT)
-  https://github.com/licenses/lice
-  pip install lice
-  lice mit
+  - https://github.com/licenses/lice
+  - pip install lice
+  - lice mit
