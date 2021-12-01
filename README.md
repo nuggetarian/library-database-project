@@ -2,17 +2,17 @@
 
 # Treba nainštalovať
 
-**ttkbootstrap**
+- **ttkbootstrap**
 
 _python -m pip install git+https://github.com/israel-dryer/ttkbootstrap_
 
 _python -m pip install ttkbootstrap_
 
-**psycopg2**
+- **psycopg2**
 
 _pip install psycopg2_
 
-**bcrypt**
+- **bcrypt**
 
 _pip install bcrypt_
 
