@@ -18,6 +18,8 @@ _pip install bcrypt_
 
 # Podmienky
 
+- Build the app
+
 - Bcrypt - skutočná validácia usera na základe hesla (Pop up s nesprávnym heslom)
 
 - User rola do databáze (nemôže byť superuser)
