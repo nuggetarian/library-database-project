@@ -23,3 +23,4 @@ window.mainloop()
 
 # TO DO
 # Pridat do tabulky user heslo, sifrovat ako na AKR cez bcrypt
+# .gitignore
