@@ -1,6 +1,6 @@
 # bpc-bds-project3
 
-# Treba nainštalovať
+# Requirements
 
 - **ttkbootstrap**
 
