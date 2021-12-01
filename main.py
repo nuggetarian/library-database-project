@@ -4,6 +4,8 @@ from tkinter import ttk
 from ttkbootstrap import Style
 import os
 from windows.postgre import Postgres
+import bcrypt
+
 
 absolutepath = os.path.abspath(__file__)
 fileDirectory = os.path.dirname(absolutepath)
@@ -18,3 +20,6 @@ loginPage = Login()
 loginPage.loginPage(window)
 
 window.mainloop() 
+
+# TO DO
+# Pridat do tabulky user heslo, sifrovat ako na AKR cez bcrypt
