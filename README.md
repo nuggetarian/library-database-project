@@ -4,17 +4,17 @@
 
 **ttkbootstrap**
 
-python -m pip install git+https://github.com/israel-dryer/ttkbootstrap
+_python -m pip install git+https://github.com/israel-dryer/ttkbootstrap_
 
-python -m pip install ttkbootstrap
+_python -m pip install ttkbootstrap_
 
 **psycopg2**
 
-pip install psycopg2
+_pip install psycopg2_
 
 **bcrypt**
 
-pip install bcrypt
+_pip install bcrypt_
 
 # Podmienky
 
