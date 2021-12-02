@@ -21,4 +21,3 @@ loginPage.loginPage(window)
 window.mainloop() 
 
 # TO DO
-# .gitignore

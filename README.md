@@ -1,5 +1,10 @@
 # bpc-bds-project3
 
+# Log In
+
+E-mail: kibo@email.com
+Password: batman
+
 # Requirements
 
 - **ttkbootstrap**
@@ -46,7 +51,7 @@
 
 - GitHub
 
-  - .gitignore file
+  - ~~.gitignore file~~
   - readme ako spustiť
 
 - License file (MIT)
