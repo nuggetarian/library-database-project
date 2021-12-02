@@ -5,7 +5,7 @@ import bcrypt
 class Postgres:
 
   DB_HOST = "localhost"
-  DB_NAME = "hahaha"
+  DB_NAME = "library-db"
   DB_USER = "postgres"
   DB_PASS = "postgres"
 
