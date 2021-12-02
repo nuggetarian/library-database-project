@@ -1,20 +1,20 @@
 # bpc-bds-project3
 
-# Treba nainštalovať
+# Requirements
 
-**ttkbootstrap**
+- **ttkbootstrap**
 
-_python -m pip install git+https://github.com/israel-dryer/ttkbootstrap_
+  _python -m pip install git+https://github.com/israel-dryer/ttkbootstrap_
 
-_python -m pip install ttkbootstrap_
+  _python -m pip install ttkbootstrap_
 
-**psycopg2**
+- **psycopg2**
 
-_pip install psycopg2_
+  _pip install psycopg2_
 
-**bcrypt**
+- **bcrypt**
 
-_pip install bcrypt_
+  _pip install bcrypt_
 
 # Podmienky
 
@@ -53,3 +53,24 @@ _pip install bcrypt_
   - https://github.com/licenses/lice
   - pip install lice
   - lice mit
+
+# Obhajoba - Prezentácia
+
+1. Title slide:
+   – your project name
+   – your name
+   – your study programme and your year of study
+2. Motivation slide:
+   – describe your project
+   – what your project is dealing with?
+3. Project intro:
+   – show your ERD
+4. Project changes:
+   – describe what did you change in your project during the development (e.g., based on
+   evaluations)
+5. Project DEMO:
+   – show several screens from the application
+   – run the project and show the project to your seminar tutor (show several project functionalities)
+6. Conclusion:
+   – describe what would you change if you would develop such a project next time
+   – where did you stuck and what was the most difficult part
