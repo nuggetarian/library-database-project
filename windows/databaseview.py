@@ -105,9 +105,70 @@ class DatabaseWindow():
           c.close()
           conn.close()
 
-      """def selectRecord(e):
-        selected = my_tree.focus()"""
+      def clearBoxes(): # Funkcia na vycistenie entry boxov, tuto funkciu volame ked cosi pridame alebo zmazeme
+        idEntry.delete(0, END)
+        firstNameEntry.delete(0, END)
+        lastNameEntry.delete(0, END)
+        mailEntry.delete(0, END)
+        cityEntry.delete(0, END)
+        roleEntry.delete(0, END)
 
-      """my_tree.bind("<ButtonRelease-1>", selectRecord)"""
+      def selectRecord(e): # Funkcia na vyplnenie entry boxov ked zvolime zaznam (klikneme na neho)
+          clearBoxes()
+
+          # Zvolenie kliknuteho zaznamu
+          selected = my_tree.focus()
+          # Ziskanie obsahu zaznamu
+          values = my_tree.item(selected, 'values')
+
+          # Vpisanie dat do entry boxov
+          try:
+            idEntry.insert(0, values[0])
+            firstNameEntry.insert(0, values[1])
+            lastNameEntry.insert(0, values[2]) 
+            mailEntry.insert(0, values[3])
+            cityEntry.insert(0, values[4])
+            roleEntry.insert(0, values[5])
+          except: # Ked klikame mimo, nevyhadzuje nam to error, ale napise do konzole "Click."
+            print("Click.")
+
+      dataGrid = LabelFrame(window, borderwidth=0)
+      dataGrid.pack(pady=10)
+
+      #data_frame.pack(fill="x", expand="yes", padx=20)
+
+      idLabel = Label(dataGrid, text="ID")
+      idLabel.grid(row=0, column=0, padx=10, pady=10)
+      idEntry = Entry(dataGrid, borderwidth=2)
+      idEntry.grid(row=0, column=1, padx=10, pady=10)
+
+      firstNameLabel = Label(dataGrid, text="First Name")
+      firstNameLabel.grid(row=0, column=2, padx=10, pady=10)
+      firstNameEntry = Entry(dataGrid, borderwidth=2)
+      firstNameEntry.grid(row=0, column=3, padx=10, pady=10)
+
+      lastNameLabel = Label(dataGrid, text="Last Name")
+      lastNameLabel.grid(row=0, column=4, padx=10, pady=10)
+      lastNameEntry = Entry(dataGrid, borderwidth=2)
+      lastNameEntry.grid(row=0, column=5, padx=10, pady=10)
+
+      mailLabel = Label(dataGrid, text="Mail")
+      mailLabel.grid(row=1, column=0, padx=10, pady=10)
+      mailEntry = Entry(dataGrid, borderwidth=2)
+      mailEntry.grid(row=1, column=1, padx=10, pady=10)
+
+      cityLabel = Label(dataGrid, text="City")
+      cityLabel.grid(row=1, column=2, padx=10, pady=10)
+      cityEntry = Entry(dataGrid, borderwidth=2)
+      cityEntry.grid(row=1, column=3, padx=10, pady=10)
+
+      roleLabel = Label(dataGrid, text="Role")
+      roleLabel.grid(row=1, column=4, padx=10, pady=10)
+      roleEntry = Entry(dataGrid, borderwidth=2)
+      roleEntry.grid(row=1, column=5, padx=10, pady=10)
+
+      # Pri uvolneni tlacidla 1 na mysi sa vykona funkcia select_record a zvoli sa dany zaznam
+      my_tree.bind("<ButtonRelease-1>", selectRecord)
+
       readDatabase()
           
