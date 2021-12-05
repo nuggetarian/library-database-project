@@ -30,13 +30,13 @@ class Login():
       password = passwordEntry.get()
 
       if postgres.comparePassword(email.strip(), password) == True:
-        print("Password correct.")
         for widget in window.winfo_children():
           widget.destroy()
         dbwindow.viewDatabase(window)
       elif postgres.comparePassword(email.strip(), password) == False:
-        print("Password incorrect.")
-        warningLabel = emailLabel = ttk.Label(warningGrid, text="Incorrect password").grid(row=0, column=0)
+        warningLabel = ttk.Label(warningGrid, text="       Incorrect password       ").grid(row=0, column=0)
+      elif postgres.comparePassword(email.strip(), password) == "Non-Existent Mail":
+        warningLabel = ttk.Label(warningGrid, text=" E-mail doesn't exist ").grid(row=0, column=0)
         
     fektImage()
     loginGrid = ttk.Labelframe(window, borderwidth=0)

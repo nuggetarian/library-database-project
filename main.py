@@ -17,7 +17,8 @@ window.iconbitmap(fileDirectory + "\\windows\\media\\vut.ico")
 
 loginPage.loginPage(window)
 
+
 window.mainloop() 
 
 # TO DO
-# Ak zadame nespravny mail osetrit
+# 

@@ -1,8 +1,10 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import font
 from typing import Counter
 import psycopg2
 from windows.window import Window
+import webbrowser
 
 
 class DatabaseWindow():
@@ -14,6 +16,19 @@ class DatabaseWindow():
       DB_PASS = "postgres"
       windowAppearance = Window()
       windowAppearance.centerWindow(window, 850, 500)
+
+      def openWebsite():
+        webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
+        
+      menu = Menu(window)
+      window.config(menu=menu)
+
+      subMenu = Menu(menu)
+      menu.add_cascade(label="File", menu=subMenu)
+
+      helpMenu = Menu(menu)
+      menu.add_cascade(label="Help", menu=helpMenu)
+      helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
    
       # Set Treeview style
       style = ttk.Style()
