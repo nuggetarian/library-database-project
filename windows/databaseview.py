@@ -10,21 +10,12 @@ class DatabaseWindow():
       DB_NAME = "library-db"
       DB_USER = "postgres"
       DB_PASS = "postgres"
-      style = ttk.Style()
       window.geometry("850x500")
-      
-      # Vyber temy treeview
+   
+      # Set Treeview style
+      style = ttk.Style()
       style.theme_use("clam")
-
-      # Nastavenie treeview farieb
-      style.configure("Treeview", 
-                      background="#444",
-                      foreground="white",
-                      rowheight=30,
-                      fieldbackground="#444")
-
-      # Zmena farby ked zvolime polozku
-      style.map('Treeview', background=[('selected', "#c22740")])
+      style.configure("Treeview", rowheight=30)
 
       # Vytvorenie treeview frame-u
       tree_frame = Frame(window)
