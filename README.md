@@ -46,7 +46,7 @@
 
   - findAll operáciu na jednu operáciu
 
-- Detailný view na jednu entitu (použiť JOIN)
+- ~~Detailný view na jednu entitu (použiť JOIN)~~
 
 - Transaction rollback atd.
 
@@ -62,7 +62,7 @@
 
 - Logging (SLF4J Logback), loguj exceptions (avoid log-and-throw antipattern)
 
-- GitHub
+- ~~GitHub~~
 
   - ~~.gitignore file~~
   - ~~readme ako spustiť~~
