@@ -1,11 +1,5 @@
 # bpc-bds-project3
 
-# Log In
-
-  E-mail: kibo@email.com
-
-  Password: batman
- 
 # Set Up
   Download PostgreSQL
   https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
@@ -17,6 +11,12 @@
   Restore file librarydb
   
   Start the application
+
+# Log In
+
+  E-mail: kibo@email.com
+
+  Password: batman
 
 # Requirements
 
