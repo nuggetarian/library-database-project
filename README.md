@@ -5,6 +5,18 @@
   E-mail: kibo@email.com
 
   Password: batman
+ 
+# Set Up
+  Download PostgreSQL
+  https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+  
+  Set up pgAdmin
+  
+  File -> Preferences -> Binary paths -> Add pgAdmin paths
+  
+  Restore file librarydb
+  
+  Start the application
 
 # Requirements
 
