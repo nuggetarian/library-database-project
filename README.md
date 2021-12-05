@@ -65,7 +65,7 @@
 - GitHub
 
   - ~~.gitignore file~~
-  - readme ako spustiť
+  - ~~readme ako spustiť~~
 
 - License file (MIT)
   - https://github.com/licenses/lice
