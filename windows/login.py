@@ -1,9 +1,8 @@
 from tkinter import *
 from tkinter import ttk
-from ttkbootstrap import Style 
 from PIL import ImageTk, Image
 import os
-import bcrypt
+from windows.databaseview import DatabaseWindow
 from windows.postgre import Postgres
 
 absolutepath = os.path.abspath(__file__)
@@ -22,14 +21,16 @@ class Login():
       fekt_label.pack()
 
     def logIn():
-      
-  
       postgres = Postgres()
+      dbwindow = DatabaseWindow()
       email = emailEntry.get()
       password = passwordEntry.get()
 
       if postgres.comparePassword(email.strip(), password) == True:
         print("Password correct.")
+        for widget in window.winfo_children():
+          widget.destroy()
+        dbwindow.viewDatabase(window)
       elif postgres.comparePassword(email.strip(), password) == False:
         print("Password incorrect.")
         warningLabel = emailLabel = ttk.Label(warningGrid, text="Incorrect password").grid(row=0, column=0)

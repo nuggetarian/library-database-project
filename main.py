@@ -21,3 +21,4 @@ loginPage.loginPage(window)
 window.mainloop() 
 
 # TO DO
+# Ak zadame nespravny mail osetrit
