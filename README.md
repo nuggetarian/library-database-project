@@ -1,11 +1,5 @@
 # bpc-bds-project3
 
-# Log In
-
-  E-mail: kibo@email.com
-
-  Password: batman
- 
 # Set Up
   Download PostgreSQL
   https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
@@ -17,6 +11,12 @@
   Restore file librarydb
   
   Start the application
+
+# Log In
+
+  E-mail: kibo@email.com
+
+  Password: batman
 
 # Requirements
 
@@ -46,7 +46,7 @@
 
   - findAll operáciu na jednu operáciu
 
-- Detailný view na jednu entitu (použiť JOIN)
+- ~~Detailný view na jednu entitu (použiť JOIN)~~
 
 - Transaction rollback atd.
 
@@ -62,7 +62,7 @@
 
 - Logging (SLF4J Logback), loguj exceptions (avoid log-and-throw antipattern)
 
-- GitHub
+- ~~GitHub~~
 
   - ~~.gitignore file~~
   - ~~readme ako spustiť~~
