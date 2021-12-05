@@ -9,12 +9,11 @@ loginPage = Login()
 absolutepath = os.path.abspath(__file__)
 fileDirectory = os.path.dirname(absolutepath)
 
+window = Tk()
 style = Style('superhero')
 window = style.master
 window.title("bpc-bds-project3") 
 window.iconbitmap(fileDirectory + "\\windows\\media\\vut.ico")
-window.geometry("500x500")
-
 
 loginPage.loginPage(window)
 

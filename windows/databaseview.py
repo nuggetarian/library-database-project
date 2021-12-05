@@ -2,15 +2,18 @@ from tkinter import *
 from tkinter import ttk
 from typing import Counter
 import psycopg2
+from windows.window import Window
 
 
 class DatabaseWindow():
   def viewDatabase(self, window):
+      
       DB_HOST = "localhost"
       DB_NAME = "library-db"
       DB_USER = "postgres"
       DB_PASS = "postgres"
-      window.geometry("850x500")
+      windowAppearance = Window()
+      windowAppearance.centerWindow(window, 850, 500)
    
       # Set Treeview style
       style = ttk.Style()

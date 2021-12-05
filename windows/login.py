@@ -4,13 +4,16 @@ from PIL import ImageTk, Image
 import os
 from windows.databaseview import DatabaseWindow
 from windows.postgre import Postgres
+from windows.window import Window
 
 absolutepath = os.path.abspath(__file__)
 fileDirectory = os.path.dirname(absolutepath)
 
 class Login():
-  def loginPage(self, window):
-    
+  def loginPage(self, window):  
+    windowAppearance = Window()
+    windowAppearance.centerWindow(window, 500, 500)
+
     def fektImage():
       fekt_img = Image.open(fileDirectory + "\\media\\fekt.png")
       fekt_img = fekt_img.resize((342,111), Image.ANTIALIAS)
@@ -35,7 +38,6 @@ class Login():
         print("Password incorrect.")
         warningLabel = emailLabel = ttk.Label(warningGrid, text="Incorrect password").grid(row=0, column=0)
         
-
     fektImage()
     loginGrid = ttk.Labelframe(window, borderwidth=0)
     loginGrid.pack(pady=10)
