@@ -21,4 +21,5 @@ loginPage.loginPage(window)
 window.mainloop() 
 
 # TO DO
-# 
+# zmenit file na window a dat tam windows na sql attack, tabulku s knizkami
+# add record except vyriesit, chyba tam city.

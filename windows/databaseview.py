@@ -27,16 +27,15 @@ class DatabaseWindow():
       window.config(menu=menu)
 
       subMenu = Menu(menu)
-      menu.add_cascade(label="File", menu=subMenu)
+      menu.add_cascade(label="Window", menu=subMenu)
+      subMenu.add_command(label="Book info", background="white", foreground="black")
 
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
    
       # Set Treeview style
-      """style = ttk.Style()"""
       style = Style('superhero')
-      #style.theme_use("clam")
       style.configure("Treeview", rowheight=30)
 
       # Vytvorenie treeview frame-u
@@ -93,11 +92,12 @@ class DatabaseWindow():
                         ad.city,
                         ro.role_type
           FROM public.user u
-          JOIN public.contact c ON u.user_id = c.user_id
-          JOIN public.user_has_address a ON u.user_id = a.user_id
-          JOIN public.address ad ON a.address_id = ad.address_id
-          JOIN public.user_has_role r ON r.user_id = u.user_id
-          JOIN public.role ro ON r.role_id = ro.role_id""")
+          LEFT JOIN public.contact c ON u.user_id = c.user_id
+          LEFT JOIN public.user_has_address a ON u.user_id = a.user_id
+          LEFT JOIN public.address ad ON a.address_id = ad.address_id
+          LEFT JOIN public.user_has_role r ON r.user_id = u.user_id
+          LEFT JOIN public.role ro ON r.role_id = ro.role_id
+          ORDER BY u.user_id ASC""")
           conn.commit()
           records = c.fetchall()
           global count
@@ -152,6 +152,35 @@ class DatabaseWindow():
             warningLabel = Label(warningGrid, text=" Nothing selected ")
             warningLabel.grid(row=0, column=0)
 
+      def addRecord():
+        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+        c = conn.cursor()
+        role = 0
+        if roleEntry.get() == "admin":
+          role = 1
+        elif roleEntry.get() == "manager":
+          role = 2
+        elif roleEntry.get() == "employee":
+          role = 3
+        elif roleEntry.get() == "donator":
+          role = 4
+        elif roleEntry.get() == "customer":
+          role = 5
+        c.execute("""INSERT INTO public.user (user_id, first_name, last_name) VALUES (%s, %s, %s);""", 
+                  (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
+        c.execute("""INSERT INTO public.contact (user_id, mail) VALUES (%s, %s);""",
+                  (idEntry.get(), mailEntry.get(),))
+        c.execute("""INSERT INTO public.user_has_role (user_id, role_id) VALUES (%s, %s);""",
+                  (idEntry.get(), role,))
+
+
+        conn.commit()
+        clearBoxes()
+        conn.close()
+
+        my_tree.delete(*my_tree.get_children())
+        readDatabase()
+
       dataGrid = ttk.Labelframe(window, borderwidth=0)
       dataGrid.pack(pady=10)
 
@@ -189,10 +218,12 @@ class DatabaseWindow():
 
       buttonGrid = ttk.Labelframe(window, borderwidth=0)
       buttonGrid.pack()
+      addRecordButton = ttk.Button(buttonGrid, text="Add", command=addRecord, cursor="hand2", style='danger.TButton')
+      addRecordButton.grid(row=0, column=0, padx=5)
       removeOneButton = ttk.Button(buttonGrid, text="Remove", command=removeFromDatabase, cursor="hand2", style='danger.TButton')
-      removeOneButton.grid(row=0, column=0, padx=5)
+      removeOneButton.grid(row=0, column=1, padx=5)
       clearBoxesButton = ttk.Button(buttonGrid, text="Clear", command=clearBoxes, cursor="hand2", style='danger.TButton')
-      clearBoxesButton.grid(row=0, column=1, padx=5)
+      clearBoxesButton.grid(row=0, column=2, padx=5)
 
       warningGrid = ttk.Labelframe(window, borderwidth=0)
       warningGrid.pack(pady=5)
@@ -202,3 +233,9 @@ class DatabaseWindow():
 
       readDatabase()
           
+
+
+"""INSERT INTO public.user (user_id, first_name, last_name) VALUES (54, 'TestName', 'TestSurname');
+                      INSERT INTO public.contact (user_id, mail) VALUES (54, 'testmail@email.com');
+                      INSERT INTO public.user_has_role (user_id, role_id) VALUES (54, 5);
+                      INSERT INTO public.user_has_address (user_id, address_id) VALUES (54, 3);"""
