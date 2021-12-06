@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from ttkbootstrap import Style
 from tkinter import font
 from typing import Counter
 import psycopg2
@@ -14,8 +15,10 @@ class DatabaseWindow():
       DB_NAME = "library-db"
       DB_USER = "postgres"
       DB_PASS = "postgres"
+      
+
       windowAppearance = Window()
-      windowAppearance.centerWindow(window, 850, 500)
+      windowAppearance.centerWindow(window, 850, 600)
 
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
@@ -31,8 +34,9 @@ class DatabaseWindow():
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
    
       # Set Treeview style
-      style = ttk.Style()
-      style.theme_use("clam")
+      """style = ttk.Style()"""
+      style = Style('superhero')
+      #style.theme_use("clam")
       style.configure("Treeview", rowheight=30)
 
       # Vytvorenie treeview frame-u
@@ -40,8 +44,10 @@ class DatabaseWindow():
       tree_frame.pack(pady=10)
 
       # Vytvorenie scrollbaru
-      tree_scroll = Scrollbar(tree_frame)
+      tree_scroll = ttk.Scrollbar(tree_frame)
       tree_scroll.pack(side=RIGHT, fill=Y)
+
+    
 
       # Vytvorenie treeview
       my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
@@ -132,7 +138,21 @@ class DatabaseWindow():
           except: # Ked klikame mimo, nevyhadzuje nam to error, ale napise do konzole "Click."
             print("Click.")
 
-      dataGrid = LabelFrame(window, borderwidth=0)
+      def removeFromDatabase(): # Funkcia na zmazanie zaznamu
+          try: # Vymazanie na zaklade id ktore ziskame z pola, ked zvolime nejaky riadok
+            x = my_tree.selection()[0]
+            my_tree.delete(x)
+            """conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+            c = conn.cursor()
+            c.execute("DELETE FROM vault WHERE oid=" + idEntry.get())
+            conn.commit()"""
+            clearBoxes()
+            # conn.close()		
+          except:  
+            warningLabel = Label(warningGrid, text=" Nothing selected ")
+            warningLabel.grid(row=0, column=0)
+
+      dataGrid = ttk.Labelframe(window, borderwidth=0)
       dataGrid.pack(pady=10)
 
       #data_frame.pack(fill="x", expand="yes", padx=20)
@@ -166,6 +186,16 @@ class DatabaseWindow():
       roleLabel.grid(row=1, column=4, padx=10, pady=10)
       roleEntry = Entry(dataGrid, borderwidth=2)
       roleEntry.grid(row=1, column=5, padx=10, pady=10)
+
+      buttonGrid = ttk.Labelframe(window, borderwidth=0)
+      buttonGrid.pack()
+      removeOneButton = ttk.Button(buttonGrid, text="Remove", command=removeFromDatabase, cursor="hand2", style='danger.TButton')
+      removeOneButton.grid(row=0, column=0, padx=5)
+      clearBoxesButton = ttk.Button(buttonGrid, text="Clear", command=clearBoxes, cursor="hand2", style='danger.TButton')
+      clearBoxesButton.grid(row=0, column=1, padx=5)
+
+      warningGrid = ttk.Labelframe(window, borderwidth=0)
+      warningGrid.pack(pady=5)
 
       # Pri uvolneni tlacidla 1 na mysi sa vykona funkcia select_record a zvoli sa dany zaznam
       my_tree.bind("<ButtonRelease-1>", selectRecord)

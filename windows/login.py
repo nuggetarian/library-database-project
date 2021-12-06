@@ -47,7 +47,7 @@ class Login():
     passwordLabel = ttk.Label(loginGrid, text="Password: ").grid(row=1, column=0)
     passwordEntry = ttk.Entry(loginGrid, width=30, show="*")
     passwordEntry.grid(row=1, column=1)
-    loginButton = ttk.Button(window, text="Login", style='danger.TButton', command=logIn).pack()
+    loginButton = ttk.Button(window, text="Login", style='danger.TButton', command=logIn, cursor="hand2").pack()
     warningGrid = ttk.Labelframe(window, borderwidth=0)
     warningGrid.pack(pady=5)
 
