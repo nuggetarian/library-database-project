@@ -1,22 +1,23 @@
 # bpc-bds-project3
 
 # Set Up
-  Download PostgreSQL
-  https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
-  
-  Set up pgAdmin
-  
-  File -> Preferences -> Binary paths -> Add pgAdmin paths
-  
-  Restore file librarydb
-  
-  Start the application
+
+Download PostgreSQL
+https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+
+Set up pgAdmin
+
+File -> Preferences -> Binary paths -> Add pgAdmin paths
+
+Restore file librarydb
+
+Start the application
 
 # Log In
 
-  E-mail: kibo@email.com
+E-mail: kibo@email.com
 
-  Password: batman
+Password: batman
 
 # Requirements
 
@@ -44,7 +45,7 @@
 
 - CRUD (Create, read, update, delete) tlačítka do treeview na aspoň jednu entitu
 
-  - findAll operáciu na jednu operáciu
+  - ~~findAll operáciu na jednu operáciu~~
 
 - ~~Detailný view na jednu entitu (použiť JOIN)~~
 

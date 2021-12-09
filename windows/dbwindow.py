@@ -1,39 +1,44 @@
 from tkinter import *
 from tkinter import ttk
 from ttkbootstrap import Style
-from tkinter import font
-from typing import Counter
 import psycopg2
+from windows.helpwindow import Help
 from windows.window import Window
 import webbrowser
 
-
 class DatabaseWindow():
-  def viewDatabase(self, window):
-      
+  def viewUsers(self, window):
+      for widget in window.winfo_children():
+          widget.destroy()
+
       DB_HOST = "localhost"
       DB_NAME = "library-db"
       DB_USER = "postgres"
       DB_PASS = "postgres"
-      
 
       windowAppearance = Window()
       windowAppearance.centerWindow(window, 850, 600)
 
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
-        
+      
+      def openHelp():
+        helpWindow = Help()
+        helpWindow.displayHelp(window)
+
+      db = DatabaseWindow()
       menu = Menu(window)
       window.config(menu=menu)
 
       subMenu = Menu(menu)
       menu.add_cascade(label="Window", menu=subMenu)
-      subMenu.add_command(label="Book info", background="white", foreground="black")
+      subMenu.add_command(label="Book info", background="white", foreground="black", command=lambda:db.viewBooks(window))
 
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
-   
+      helpMenu.add_command(label="Actual Help", command=openHelp, background="white", foreground="black")
+
       # Set Treeview style
       style = Style('superhero')
       style.configure("Treeview", rowheight=30)
@@ -166,12 +171,26 @@ class DatabaseWindow():
           role = 4
         elif roleEntry.get() == "customer":
           role = 5
+        
+        city = 0
+        if cityEntry.get() == "Jonesboro":
+          city = 1
+        elif cityEntry.get() == "Seattle":
+          city = 2
+        elif cityEntry.get() == "Providence":
+          city = 3
+        elif cityEntry.get() == "Canton":
+          city = 4
+        elif cityEntry.get() == "Wellesley":
+          city = 5
         c.execute("""INSERT INTO public.user (user_id, first_name, last_name) VALUES (%s, %s, %s);""", 
                   (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
         c.execute("""INSERT INTO public.contact (user_id, mail) VALUES (%s, %s);""",
                   (idEntry.get(), mailEntry.get(),))
         c.execute("""INSERT INTO public.user_has_role (user_id, role_id) VALUES (%s, %s);""",
                   (idEntry.get(), role,))
+        c.execute("""INSERT INTO public.user_has_address (user_id, address_id) VALUES (%s, %s);""",
+                  (idEntry.get(), city,))
 
 
         conn.commit()
@@ -232,7 +251,207 @@ class DatabaseWindow():
       my_tree.bind("<ButtonRelease-1>", selectRecord)
 
       readDatabase()
-          
+
+  def viewBooks(self, window):
+      for widget in window.winfo_children():
+          widget.destroy()
+
+      DB_HOST = "localhost"
+      DB_NAME = "library-db"
+      DB_USER = "postgres"
+      DB_PASS = "postgres"
+      
+      windowAppearance = Window()
+      windowAppearance.centerWindow(window, 900, 600)
+
+      def openWebsite():
+        webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
+
+      db = DatabaseWindow()
+      menu = Menu(window)
+      window.config(menu=menu)
+
+      subMenu = Menu(menu)
+      menu.add_cascade(label="Window", menu=subMenu)
+      subMenu.add_command(label="User info", background="white", foreground="black", command=lambda:db.viewUsers(window))
+
+      helpMenu = Menu(menu)
+      menu.add_cascade(label="Help", menu=helpMenu)
+      helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
+  
+
+      # Set Treeview style
+      style = Style('superhero')
+      style.configure("Treeview", rowheight=30)
+
+      # Vytvorenie treeview frame-u
+      tree_frame = Frame(window)
+      tree_frame.pack(pady=10)
+
+      # Vytvorenie scrollbaru
+      tree_scroll = ttk.Scrollbar(tree_frame)
+      tree_scroll.pack(side=RIGHT, fill=Y)
+
+      # Vytvorenie treeview
+      my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
+      my_tree.pack()
+
+      # Konfiguracia scrollbaru
+      tree_scroll.config(command=my_tree.yview)
+
+      # Definovanie stlpcov
+      my_tree['columns'] = ("ID", "Name", "First Name", "Last Name", "Genre", "Year", "ISBN")
+
+      # Formatovanie stlpcov
+      my_tree.column("#0", width=0, stretch = NO)
+      my_tree.column("ID", anchor=W, width=70)
+      my_tree.column("Name", anchor=W, width=140)
+      my_tree.column("First Name", anchor=W, width=140)
+      my_tree.column("Last Name", anchor=W, width=140)
+      my_tree.column("Genre", anchor=W, width=140)
+      my_tree.column("Year", anchor=W, width=70)
+      my_tree.column("ISBN", anchor=W, width=140)
+
+      # Vytvorenie nadpisov
+      my_tree.heading("#0", text="", anchor=W)
+      my_tree.heading("ID", text="ID", anchor=W)
+      my_tree.heading("Name", text="Name", anchor=W)
+      my_tree.heading("First Name", text="First Name", anchor=W)
+      my_tree.heading("Last Name", text="Last Name", anchor=W)
+      my_tree.heading("Genre", text="Genre", anchor=W)
+      my_tree.heading("Year", text="Year", anchor=W)
+      my_tree.heading("ISBN", text="ISBN", anchor=W)
+
+      # Vytvorenie pruhovanych riadkov na zaklade toho ci su liche alebo sude
+      my_tree.tag_configure('oddrow', background="#2b3e50")
+      my_tree.tag_configure('evenrow', background="#111d29")
+
+      def readDatabase():
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
+
+          c.execute("""SELECT b.book_id,
+                              b.name,
+                              a.first_name,
+                              a.last_name,
+                              b.genre,
+                              b.year,
+                              b.isbn
+                          FROM public.book_info b
+                          JOIN public.author_has_book ahb ON b.book_id = ahb.book_id
+                          JOIN public.author a ON ahb.author_id = a.author_id
+                          ORDER BY b.book_id ASC""")
+          conn.commit()
+          records = c.fetchall()
+          global count
+          count = 0
+          for record in records:
+            if count % 2 == 0:
+              my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5], record[6]), tags=('evenrow',))
+            else:
+              my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5], record[6]), tags=('oddrow',)) 
+            count += 1
+          c.close()
+          conn.close()
+
+      def clearBoxes(): # Funkcia na vycistenie entry boxov, tuto funkciu volame ked cosi pridame alebo zmazeme
+        idEntry.delete(0, END)
+        firstNameEntry.delete(0, END)
+        lastNameEntry.delete(0, END)
+        mailEntry.delete(0, END)
+        cityEntry.delete(0, END)
+        roleEntry.delete(0, END)
+
+      def selectRecord(e): # Funkcia na vyplnenie entry boxov ked zvolime zaznam (klikneme na neho)
+          clearBoxes()
+
+          # Zvolenie kliknuteho zaznamu
+          selected = my_tree.focus()
+          # Ziskanie obsahu zaznamu
+          values = my_tree.item(selected, 'values')
+
+          # Vpisanie dat do entry boxov
+          try:
+            idEntry.insert(0, values[0])
+            nameEntry.insert(0, values[1])
+            firstNameEntry.insert(0, values[2])
+            lastNameEntry.insert(0, values[3]) 
+            mailEntry.insert(0, values[4])
+            cityEntry.insert(0, values[5])
+            roleEntry.insert(0, values[6])
+          except: # Ked klikame mimo, nevyhadzuje nam to error, ale napise do konzole "Click."
+            print("Click.")
+
+      def removeFromDatabase(): # Funkcia na zmazanie zaznamu
+          try: # Vymazanie na zaklade id ktore ziskame z pola, ked zvolime nejaky riadok
+            x = my_tree.selection()[0]
+            my_tree.delete(x)
+            clearBoxes()
+            # conn.close()		
+          except:  
+            warningLabel = Label(warningGrid, text=" Nothing selected ")
+            warningLabel.grid(row=0, column=0)
+
+      def addRecord():
+        my_tree.delete(*my_tree.get_children())
+        readDatabase()
+
+      dataGrid = ttk.Labelframe(window, borderwidth=0)
+      dataGrid.pack(pady=10)
+
+      #data_frame.pack(fill="x", expand="yes", padx=20)
+
+      idLabel = Label(dataGrid, text="ID")
+      idLabel.grid(row=0, column=0, padx=10, pady=10)
+      idEntry = Entry(dataGrid, borderwidth=2)
+      idEntry.grid(row=0, column=1, padx=10, pady=10)
+
+      nameLabel = Label(dataGrid, text="Name")
+      nameLabel.grid(row=0, column=2, padx=10, pady=10)
+      nameEntry = Entry(dataGrid, borderwidth=2)
+      nameEntry.grid(row=0, column=3, padx=10, pady=10)
+
+      firstNameLabel = Label(dataGrid, text="First Name")
+      firstNameLabel.grid(row=0, column=4, padx=10, pady=10)
+      firstNameEntry = Entry(dataGrid, borderwidth=2)
+      firstNameEntry.grid(row=0, column=5, padx=10, pady=10)
+
+      lastNameLabel = Label(dataGrid, text="Last Name")
+      lastNameLabel.grid(row=1, column=0, padx=10, pady=10)
+      lastNameEntry = Entry(dataGrid, borderwidth=2)
+      lastNameEntry.grid(row=1, column=1, padx=10, pady=10)
+
+      mailLabel = Label(dataGrid, text="Genre")
+      mailLabel.grid(row=1, column=2, padx=10, pady=10)
+      mailEntry = Entry(dataGrid, borderwidth=2)
+      mailEntry.grid(row=1, column=3, padx=10, pady=10)
+
+      cityLabel = Label(dataGrid, text="Year")
+      cityLabel.grid(row=1, column=4, padx=10, pady=10)
+      cityEntry = Entry(dataGrid, borderwidth=2)
+      cityEntry.grid(row=1, column=5, padx=10, pady=10)
+
+      roleLabel = Label(dataGrid, text="ISBN")
+      roleLabel.grid(row=2, column=2, padx=10, pady=10)
+      roleEntry = Entry(dataGrid, borderwidth=2)
+      roleEntry.grid(row=2, column=3, padx=10, pady=10)
+
+      buttonGrid = ttk.Labelframe(window, borderwidth=0)
+      buttonGrid.pack()
+      addRecordButton = ttk.Button(buttonGrid, text="Add", command=addRecord, cursor="hand2", style='danger.TButton')
+      addRecordButton.grid(row=0, column=0, padx=5)
+      removeOneButton = ttk.Button(buttonGrid, text="Remove", command=removeFromDatabase, cursor="hand2", style='danger.TButton')
+      removeOneButton.grid(row=0, column=1, padx=5)
+      clearBoxesButton = ttk.Button(buttonGrid, text="Clear", command=clearBoxes, cursor="hand2", style='danger.TButton')
+      clearBoxesButton.grid(row=0, column=2, padx=5)
+
+      warningGrid = ttk.Labelframe(window, borderwidth=0)
+      warningGrid.pack(pady=5)
+
+      # Pri uvolneni tlacidla 1 na mysi sa vykona funkcia select_record a zvoli sa dany zaznam
+      my_tree.bind("<ButtonRelease-1>", selectRecord)
+
+      readDatabase()          
 
 
 """INSERT INTO public.user (user_id, first_name, last_name) VALUES (54, 'TestName', 'TestSurname');

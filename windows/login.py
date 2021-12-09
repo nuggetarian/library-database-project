@@ -2,9 +2,9 @@ from tkinter import *
 from tkinter import ttk
 from PIL import ImageTk, Image
 import os
-from windows.databaseview import DatabaseWindow
 from windows.postgre import Postgres
 from windows.window import Window
+from windows.dbwindow import DatabaseWindow
 
 absolutepath = os.path.abspath(__file__)
 fileDirectory = os.path.dirname(absolutepath)
@@ -15,7 +15,7 @@ class Login():
     windowAppearance.centerWindow(window, 500, 500)
 
     def fektImage():
-      fekt_img = Image.open(fileDirectory + "\\media\\fekt.png")
+      fekt_img = Image.open("fekt.png")
       fekt_img = fekt_img.resize((342,111), Image.ANTIALIAS)
       fekt_img = ImageTk.PhotoImage(fekt_img)
       fekt_label = ttk.Label(image=fekt_img)
@@ -30,9 +30,8 @@ class Login():
       password = passwordEntry.get()
 
       if postgres.comparePassword(email.strip(), password) == True:
-        for widget in window.winfo_children():
-          widget.destroy()
-        dbwindow.viewDatabase(window)
+        dbwindow.viewUsers(window)
+
       elif postgres.comparePassword(email.strip(), password) == False:
         warningLabel = ttk.Label(warningGrid, text="       Incorrect password       ").grid(row=0, column=0)
       elif postgres.comparePassword(email.strip(), password) == "Non-Existent Mail":
