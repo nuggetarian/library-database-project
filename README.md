@@ -9,6 +9,8 @@ Set up pgAdmin
 
 File -> Preferences -> Binary paths -> Add pgAdmin paths
 
+Make sure the port is set to 5432
+
 Restore file librarydb
 
 Start the application
