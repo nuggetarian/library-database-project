@@ -200,6 +200,21 @@ class DatabaseWindow():
         my_tree.delete(*my_tree.get_children())
         readDatabase()
 
+      def updateRecord():
+        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+        c = conn.cursor()
+        #c.execute("""INSERT INTO public.user (user_id, first_name, last_name) VALUES (%s, %s, %s);""", 
+        #          (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
+        c.execute("""UPDATE public.user SET last_name = %s, first_name = %s WHERE user_id = %s;""", (lastNameEntry.get(),firstNameEntry.get(),idEntry.get(),))
+        c.execute("""UPDATE public.contact SET mail = %s WHERE user_id = %s;""", (mailEntry.get(),idEntry.get(),))
+
+        conn.commit()
+        clearBoxes()
+        conn.close()
+
+        my_tree.delete(*my_tree.get_children())
+        readDatabase()          
+
       dataGrid = ttk.Labelframe(window, borderwidth=0)
       dataGrid.pack(pady=10)
 
@@ -239,10 +254,12 @@ class DatabaseWindow():
       buttonGrid.pack()
       addRecordButton = ttk.Button(buttonGrid, text="Add", command=addRecord, cursor="hand2", style='danger.TButton')
       addRecordButton.grid(row=0, column=0, padx=5)
+      addRecordButton = ttk.Button(buttonGrid, text="Update", command=updateRecord, cursor="hand2", style='danger.TButton')
+      addRecordButton.grid(row=0, column=1, padx=5)
       removeOneButton = ttk.Button(buttonGrid, text="Remove", command=removeFromDatabase, cursor="hand2", style='danger.TButton')
-      removeOneButton.grid(row=0, column=1, padx=5)
+      removeOneButton.grid(row=0, column=2, padx=5)
       clearBoxesButton = ttk.Button(buttonGrid, text="Clear", command=clearBoxes, cursor="hand2", style='danger.TButton')
-      clearBoxesButton.grid(row=0, column=2, padx=5)
+      clearBoxesButton.grid(row=0, column=3, padx=5)
 
       warningGrid = ttk.Labelframe(window, borderwidth=0)
       warningGrid.pack(pady=5)
