@@ -127,6 +127,7 @@ class DatabaseWindow():
       def selectRecord(e): # Funkcia na vyplnenie entry boxov ked zvolime zaznam (klikneme na neho)
           clearBoxes()
 
+          global roleset
           # Zvolenie kliknuteho zaznamu
           selected = my_tree.focus()
           # Ziskanie obsahu zaznamu
@@ -140,6 +141,17 @@ class DatabaseWindow():
             mailEntry.insert(0, values[3])
             cityEntry.insert(0, values[4])
             roleEntry.insert(0, values[5])
+
+            if roleEntry.get() == "admin":
+              roleset = 1
+            elif roleEntry.get() == "manager":
+              roleset = 2
+            elif roleEntry.get() == "employee":
+              roleset = 3
+            elif roleEntry.get() == "donator":
+              roleset = 4
+            elif roleEntry.get() == "customer":
+              roleset = 5
           except: # Ked klikame mimo, nevyhadzuje nam to error, ale napise do konzole "Click."
             print("Click.")
 
@@ -205,8 +217,37 @@ class DatabaseWindow():
         c = conn.cursor()
         #c.execute("""INSERT INTO public.user (user_id, first_name, last_name) VALUES (%s, %s, %s);""", 
         #          (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
-        c.execute("""UPDATE public.user SET last_name = %s, first_name = %s WHERE user_id = %s;""", (lastNameEntry.get(),firstNameEntry.get(),idEntry.get(),))
-        c.execute("""UPDATE public.contact SET mail = %s WHERE user_id = %s;""", (mailEntry.get(),idEntry.get(),))
+        city = 0
+        if cityEntry.get() == "Jonesboro":
+          city = 1
+        elif cityEntry.get() == "Seattle":
+          city = 2
+        elif cityEntry.get() == "Providence":
+          city = 3
+        elif cityEntry.get() == "Canton":
+          city = 4
+        elif cityEntry.get() == "Wellesley":
+          city = 5
+
+        role = 0
+        if roleEntry.get() == "admin":
+          role = 1
+        elif roleEntry.get() == "manager":
+          role = 2
+        elif roleEntry.get() == "employee":
+          role = 3
+        elif roleEntry.get() == "donator":
+          role = 4
+        elif roleEntry.get() == "customer":
+          role = 5
+        
+        try:
+          c.execute("""UPDATE public.user SET last_name = %s, first_name = %s WHERE user_id = %s;""", (lastNameEntry.get(),firstNameEntry.get(),idEntry.get(),))
+          c.execute("""UPDATE public.contact SET mail = %s WHERE user_id = %s;""", (mailEntry.get(),idEntry.get(),))
+          c.execute("""UPDATE public.user_has_address SET address_id = %s WHERE user_id = %s;""", (city,idEntry.get(),))
+          c.execute("""UPDATE public.user_has_role SET role_id = %s WHERE user_id = %s AND role_id = %s;""", (role,idEntry.get(),roleset,))
+        except psycopg2.errors.UniqueViolation:
+          print("Bruh")
 
         conn.commit()
         clearBoxes()
