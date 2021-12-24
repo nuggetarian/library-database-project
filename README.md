@@ -70,10 +70,14 @@ Password: batman
   - ~~.gitignore file~~
   - ~~readme ako spustiť~~
 
-- License file (MIT)
-  - https://github.com/licenses/lice
-  - pip install lice
-  - lice mit
+- ~~License file (MIT)~~
+  - ~~https://github.com/licenses/lice~~
+  - ~~pip install lice~~
+  - ~~lice mit~~
+
+- ~~Licenses of external libraries~~
+  - ~~https://github.com/raimon49/pip-licenses~~
+  - ~~--format=html~~
 
 # Obhajoba - Prezentácia
 
