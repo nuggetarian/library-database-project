@@ -578,19 +578,27 @@ class DatabaseWindow():
           infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed/doesn't exist.").pack(pady=5)
       
       def createInjectionTable():
-          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-          c = conn.cursor()
-          c.execute("""CREATE TABLE public.sqlinjectiontable1(user_id INT PRIMARY KEY      NOT NULL,
-                                                              first_name          CHAR(50) NOT NULL,
-                                                              nickname            char(50) NOT NULL
-                                                              );""")
-          c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (1, 'Robert', 'Bob');")
-          conn.commit()
-          c.close()
-          conn.close()
+          try:
+            conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+            c = conn.cursor()
+            c.execute("""CREATE TABLE public.sqlinjectiontable1(user_id INT PRIMARY KEY      NOT NULL,
+                                                                first_name          CHAR(50) NOT NULL,
+                                                                nickname            char(50) NOT NULL
+                                                                );""")
+            c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (1, 'Robert', 'Bob');")
+            conn.commit()
+            c.close()
+            conn.close()
+          except psycopg2.errors.DuplicateTable:
+            conn.rollback()
+            logging.warning('psycopg2.errors.DuplicateTable: relation already exists.')
 
       
-      infoLabel1 = ttk.Label(window, text="This is a search bar of an unsecured website.").pack(pady=5)
+      infoLabel1 = ttk.Label(window, text="""      This particural window doesn't use 'Prepared Statements'. 
+      That means any user can execute any SQL query they please by typing a special string into the search bar.
+      Alwasys use 'Prepared Statements' to prevent that. 
+      See 'Help' on how to use this window for learning purposes.""").pack(pady=10)
+      infoLabel2 = ttk.Label(window, text="This is a search bar of an unsecured website.").pack()
       textGrid = ttk.Labelframe(window, borderwidth=0)
       textGrid.pack()
       sqlLabel = ttk.Label(textGrid, text="Search: ").grid(row=0, column=0)
@@ -600,7 +608,7 @@ class DatabaseWindow():
       injectButton = ttk.Button(window, text="Search", style='danger.TButton', command=injectTable, cursor="hand2").pack(pady=5)
       createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack(pady=5)
 
-      def checkTable():
+      """def checkTable():
         try:
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
           c = conn.cursor()
@@ -608,7 +616,7 @@ class DatabaseWindow():
           if bool(c.rowcount) == True:
             infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 exists.").pack(pady=5)
         except psycopg2.errors.UndefinedTable:
-          infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed.").pack(pady=5)
+          infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed.").pack(pady=5)"""
       
       
       #Do Helpu napis ze vyhladavas Roberta a najde ti jeho nickname. "Try searching it again" 
