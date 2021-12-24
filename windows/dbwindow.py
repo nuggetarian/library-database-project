@@ -37,7 +37,8 @@ class DatabaseWindow():
 
       subMenu = Menu(menu)
       menu.add_cascade(label="Window", menu=subMenu)
-      subMenu.add_command(label="Book info", background="white", foreground="black", command=lambda:db.viewBooks(window))
+      subMenu.add_command(label="Book Info", background="white", foreground="black", command=lambda:db.viewBooks(window))
+      subMenu.add_command(label="SQL Injection", background="white", foreground="black", command=lambda:db.sqlInjection(window))
 
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
@@ -344,7 +345,8 @@ class DatabaseWindow():
 
       subMenu = Menu(menu)
       menu.add_cascade(label="Window", menu=subMenu)
-      subMenu.add_command(label="User info", background="white", foreground="black", command=lambda:db.viewUsers(window))
+      subMenu.add_command(label="User Info", background="white", foreground="black", command=lambda:db.viewUsers(window))
+      subMenu.add_command(label="SQL Injection", background="white", foreground="black", command=lambda:db.sqlInjection(window))
 
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
@@ -524,8 +526,41 @@ class DatabaseWindow():
 
       readDatabase()          
 
+  def sqlInjection(self, window):
+      for widget in window.winfo_children():
+          widget.destroy()
 
-"""INSERT INTO public.user (user_id, first_name, last_name) VALUES (54, 'TestName', 'TestSurname');
-                      INSERT INTO public.contact (user_id, mail) VALUES (54, 'testmail@email.com');
-                      INSERT INTO public.user_has_role (user_id, role_id) VALUES (54, 5);
-                      INSERT INTO public.user_has_address (user_id, address_id) VALUES (54, 3);"""
+      DB_HOST = "localhost"
+      DB_NAME = "library-db"
+      DB_USER = "postgres"
+      DB_PASS = "postgres"
+
+      windowAppearance = Window()
+      windowAppearance.centerWindow(window, 850, 600)
+
+      def openWebsite():
+        webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
+
+      db = DatabaseWindow()
+      menu = Menu(window)
+      window.config(menu=menu)
+
+      subMenu = Menu(menu)
+      menu.add_cascade(label="Window", menu=subMenu)
+      subMenu.add_command(label="User Info", background="white", foreground="black", command=lambda:db.viewUsers(window))
+      subMenu.add_command(label="Book Info", background="white", foreground="black", command=lambda:db.viewBooks(window))
+
+      helpMenu = Menu(menu)
+      menu.add_cascade(label="Help", menu=helpMenu)
+      helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
+
+      textGrid = ttk.Labelframe(window, borderwidth=0)
+      textGrid.pack(pady=10)
+      sqlLabel = ttk.Label(textGrid, text="SQL Injection: ").grid(row=0, column=0)
+      sqlEntry = ttk.Entry(textGrid, width=60)
+      sqlEntry.insert(0, "; DROP TABLE public.sqlinjectiontable1;")
+      sqlEntry.grid(row=0, column=1, pady=10)
+      injectButton = ttk.Button(window, text="Inject", style='danger.TButton', command=None, cursor="hand2").pack()
+      infoLabel = ttk.Label(window, text="Just press inject!").pack(pady=10)
+
+      #WHAT TO DO - Simuluj ze tym tlacitkom ides cosi updatnut a nedas tam prepared statement. Opis to v labeli
