@@ -22,7 +22,7 @@ class DatabaseWindow():
       DB_PASS = "postgres"
 
       windowAppearance = Window()
-      windowAppearance.centerWindow(window, 850, 600)
+      windowAppearance.centerWindow(window, 850, 700)
 
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
@@ -129,6 +129,7 @@ class DatabaseWindow():
         mailEntry.delete(0, END)
         cityEntry.delete(0, END)
         roleEntry.delete(0, END)
+        filterEntry.delete(0, END)
 
       def selectRecord(e): # Funkcia na vyplnenie entry boxov ked zvolime zaznam (klikneme na neho)
           clearBoxes()
@@ -270,6 +271,43 @@ class DatabaseWindow():
         my_tree.delete(*my_tree.get_children())
         readDatabase()          
 
+      def filterLastName():
+          my_tree.delete(*my_tree.get_children())
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
+
+          c.execute("""SELECT DISTINCT
+                        u.user_id,
+                        u.first_name,
+                        u.last_name,
+                        c.mail,
+                        ad.city,
+                        ro.role_type
+          FROM public.user u
+          LEFT JOIN public.contact c ON u.user_id = c.user_id
+          LEFT JOIN public.user_has_address a ON u.user_id = a.user_id
+          LEFT JOIN public.address ad ON a.address_id = ad.address_id
+          LEFT JOIN public.user_has_role r ON r.user_id = u.user_id
+          LEFT JOIN public.role ro ON r.role_id = ro.role_id
+		      WHERE u.last_name = %s;""", (filterEntry.get(),))
+          conn.commit()
+          filtered = c.fetchall()
+          global count
+          count = 0
+          for item in filtered:
+            if count % 2 == 0:
+              my_tree.insert(parent='', index='end', iid=count, text='', values=(item[0], item[1], item[2], item[3], item[4], item[5]), tags=('evenrow',))
+            else:
+              my_tree.insert(parent='', index='end', iid=count, text='', values=(item[0], item[1], item[2], item[3], item[4], item[5]), tags=('oddrow',)) 
+            count += 1
+          c.close()
+          conn.close()
+
+      def refresh():
+        clearBoxes()
+        my_tree.delete(*my_tree.get_children())
+        readDatabase()
+
       dataGrid = ttk.Labelframe(window, borderwidth=0)
       dataGrid.pack(pady=10)
 
@@ -315,6 +353,16 @@ class DatabaseWindow():
       removeOneButton.grid(row=0, column=2, padx=5)
       clearBoxesButton = ttk.Button(buttonGrid, text="Clear", command=clearBoxes, cursor="hand2", style='danger.TButton')
       clearBoxesButton.grid(row=0, column=3, padx=5)
+      refreshButton = ttk.Button(buttonGrid, text="Refresh", command=refresh, cursor="hand2", style='danger.TButton')
+      refreshButton.grid(row=0, column=4, padx=5)
+
+      filterGrid = ttk.Labelframe(window, borderwidth=0)
+      filterGrid.pack()
+      filterEntry = Entry(filterGrid, borderwidth=2)
+      filterEntry.grid(row=0, column=0, padx=10, pady=10)
+      clearBoxesButton = ttk.Button(filterGrid, text="Filter Last Name", command=filterLastName, cursor="hand2", style='danger.TButton')
+      clearBoxesButton.grid(row=0, column=1, padx=5)
+
 
       warningGrid = ttk.Labelframe(window, borderwidth=0)
       warningGrid.pack(pady=5)
@@ -536,7 +584,7 @@ class DatabaseWindow():
       DB_PASS = "postgres"
 
       windowAppearance = Window()
-      windowAppearance.centerWindow(window, 850, 600)
+      windowAppearance.centerWindow(window, 700, 600)
 
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
@@ -569,13 +617,16 @@ class DatabaseWindow():
           result = find[0][0]
           c.close()
           conn.close()
-          infoLabel4 = ttk.Label(window, text=result).pack(pady=5)
+          infoLabel4 = ttk.Label(warningGrid, text="                     " + result+  "                      ")
+          infoLabel4.grid(row=0, column=0)
         except IndexError:
           logging.warning('IndexError: User Not Found.')
         except psycopg2.ProgrammingError:
-          infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed/doesn't exist.").pack(pady=5)
+          infoLabel3 = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.")
+          infoLabel3.grid(row=0, column=0)
         except psycopg2.errors.UndefinedTable:
-          infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed/doesn't exist.").pack(pady=5)
+          infoLabel3 = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.")
+          infoLabel3.grid(row=0, column=0)
       
       def createInjectionTable():
           try:
@@ -607,6 +658,9 @@ class DatabaseWindow():
       sqlEntry.grid(row=0, column=1, pady=10)
       injectButton = ttk.Button(window, text="Search", style='danger.TButton', command=injectTable, cursor="hand2").pack(pady=5)
       createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack(pady=5)
+
+      warningGrid = ttk.LabelFrame(window, borderwidth=0)
+      warningGrid.pack()
 
       """def checkTable():
         try:
