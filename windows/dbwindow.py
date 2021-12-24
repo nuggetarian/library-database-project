@@ -554,13 +554,14 @@ class DatabaseWindow():
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
 
+      infoLabel1 = ttk.Label(window, text="This is a search bar of an unsecured website.").pack(pady=5)
       textGrid = ttk.Labelframe(window, borderwidth=0)
-      textGrid.pack(pady=10)
-      sqlLabel = ttk.Label(textGrid, text="SQL Injection: ").grid(row=0, column=0)
+      textGrid.pack()
+      sqlLabel = ttk.Label(textGrid, text="Search: ").grid(row=0, column=0)
       sqlEntry = ttk.Entry(textGrid, width=60)
-      sqlEntry.insert(0, "; DROP TABLE public.sqlinjectiontable1;")
+      sqlEntry.insert(0, "';DROP TABLE public.sqlinjectiontable1;--")
       sqlEntry.grid(row=0, column=1, pady=10)
       injectButton = ttk.Button(window, text="Inject", style='danger.TButton', command=None, cursor="hand2").pack()
-      infoLabel = ttk.Label(window, text="Just press inject!").pack(pady=10)
+      infoLabel2 = ttk.Label(window, text="Just press inject!").pack(pady=10)
 
       #WHAT TO DO - Simuluj ze tym tlacitkom ides cosi updatnut a nedas tam prepared statement. Opis to v labeli
