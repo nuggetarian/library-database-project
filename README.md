@@ -45,7 +45,7 @@ Password: batman
 
 - Iná schema ako public
 
-- CRUD (Create, read, update, delete) tlačítka do treeview na aspoň jednu entitu
+- ~~CRUD (Create, read, update, delete) tlačítka do treeview na aspoň jednu entitu~~
 
   - ~~findAll operáciu na jednu operáciu~~
 
