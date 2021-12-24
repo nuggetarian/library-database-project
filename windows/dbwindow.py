@@ -541,6 +541,10 @@ class DatabaseWindow():
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
 
+      def openHelp():
+        helpWindow = Help()
+        helpWindow.displayHelpSQL(window)
+
       db = DatabaseWindow()
       menu = Menu(window)
       window.config(menu=menu)
@@ -553,6 +557,7 @@ class DatabaseWindow():
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
+      helpMenu.add_command(label="Actual Help", command=openHelp, background="white", foreground="black")
 
       def injectTable():
         try:
@@ -592,10 +597,9 @@ class DatabaseWindow():
       sqlEntry = ttk.Entry(textGrid, width=60)
       sqlEntry.insert(0, "';DROP TABLE public.sqlinjectiontable1;--")
       sqlEntry.grid(row=0, column=1, pady=10)
-      injectButton = ttk.Button(window, text="Inject", style='danger.TButton', command=injectTable, cursor="hand2").pack()
-      infoLabel2 = ttk.Label(window, text="Just press inject!").pack(pady=10)
-      createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack()
-      
+      injectButton = ttk.Button(window, text="Search", style='danger.TButton', command=injectTable, cursor="hand2").pack(pady=5)
+      createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack(pady=5)
+
       def checkTable():
         try:
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
@@ -607,5 +611,5 @@ class DatabaseWindow():
           infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed.").pack(pady=5)
       
       
-
+      #Do Helpu napis ze vyhladavas Roberta a najde ti jeho nickname. "Try searching it again" 
       #WHAT TO DO - Simuluj ze tym tlacitkom ides cosi updatnut a nedas tam prepared statement. Opis to v labeli

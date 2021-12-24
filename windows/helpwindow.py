@@ -18,5 +18,19 @@ class Help():
     cityInfoLabel2 = ttk.Label(popUp, text="      • Canton").pack(anchor="nw")
     cityInfoLabel2 = ttk.Label(popUp, text="      • Wellesley").pack(anchor="nw")
     idInfoLabel = ttk.Label(popUp, text="  • ID must be unique").pack(anchor="nw", pady=10)
+  
+  def displayHelpSQL(self, window):
+    windowAppearance = Window()
+
+    popUp = Toplevel(window)
+    windowAppearance.centerWindow(popUp, 600, 250)
+    popUp.title("Help")
+    infoLabel = ttk.Label(popUp, text="Operating the SQL Injection window: ", font='bold').pack(anchor=CENTER, pady=15)
+    infoLabel1 = ttk.Label(popUp, text="  • Search bar is used to find a nickname of a user in sqlinjectiontable1.").pack(anchor="nw")
+    infoLabel2 = ttk.Label(popUp, text="  • Try searching 'Robert'").pack(anchor="nw")
+    infoLabel3 = ttk.Label(popUp, text="  • Press 'Search' button to try the preloaded SQL Injection").pack(anchor="nw")
+    infoLabel4 = ttk.Label(popUp, text="  • Try searching 'Robert' again").pack(anchor="nw")
+    infoLabel5 = ttk.Label(popUp, text="  • If you wish to repeat the process, press 'Create sqlinjectiontable1' to create the table again").pack(anchor="nw")
+
 
 
