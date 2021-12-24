@@ -175,6 +175,7 @@ class DatabaseWindow():
             #conn.close()		
           except IndexError:  
             warningLabel = Label(warningGrid, text=" Nothing selected ")
+            logging.warning('IndexError')
             warningLabel.grid(row=0, column=0)
 
       def addRecord():
