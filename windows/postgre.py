@@ -10,7 +10,7 @@ class Postgres:
                       format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
   DB_HOST = "localhost"
-  DB_NAME = "library-db"
+  DB_NAME = "librarydb"
   DB_USER = "postgres"
   DB_PASS = "postgres"
 

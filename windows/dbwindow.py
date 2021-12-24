@@ -17,7 +17,7 @@ class DatabaseWindow():
           widget.destroy()
 
       DB_HOST = "localhost"
-      DB_NAME = "library-db"
+      DB_NAME = "librarydb"
       DB_USER = "postgres"
       DB_PASS = "postgres"
 
@@ -379,7 +379,7 @@ class DatabaseWindow():
           widget.destroy()
 
       DB_HOST = "localhost"
-      DB_NAME = "library-db"
+      DB_NAME = "librarydb"
       DB_USER = "postgres"
       DB_PASS = "postgres"
       
@@ -581,7 +581,7 @@ class DatabaseWindow():
           widget.destroy()
 
       DB_HOST = "localhost"
-      DB_NAME = "library-db"
+      DB_NAME = "librarydb"
       DB_USER = "postgres"
       DB_PASS = "postgres"
 
