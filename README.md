@@ -81,7 +81,7 @@ Password: batman
 
 # Some Info
 
-pip-licenses has been used to generate licenses of external libraries. Unused libraries have been removed from the .html
+**pip-licenses** has been used to generate licenses of external libraries. Unused libraries have been removed from the .html
 
 # Obhajoba - Prezentácia
 
