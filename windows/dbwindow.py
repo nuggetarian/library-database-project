@@ -5,8 +5,13 @@ import psycopg2
 from windows.helpwindow import Help
 from windows.window import Window
 import webbrowser
+import logging
 
 class DatabaseWindow():
+  logging.basicConfig(filename="logfile.log",
+                      filemode='a',
+                      format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+
   def viewUsers(self, window):
       for widget in window.winfo_children():
           widget.destroy()
@@ -159,13 +164,16 @@ class DatabaseWindow():
           try: # Vymazanie na zaklade id ktore ziskame z pola, ked zvolime nejaky riadok
             x = my_tree.selection()[0]
             my_tree.delete(x)
-            """conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+            conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
             c = conn.cursor()
-            c.execute("DELETE FROM vault WHERE oid=" + idEntry.get())
-            conn.commit()"""
+            c.execute("""DELETE FROM public.user_has_address WHERE user_id = %s""", (idEntry.get(),))
+            c.execute("""DELETE FROM public.user_has_role WHERE user_id = %s""", (idEntry.get(),))
+            c.execute("""DELETE FROM public.contact WHERE user_id = %s""", (idEntry.get(),))
+            c.execute("""DELETE FROM public.user WHERE user_id = %s""", (idEntry.get(),))
+            conn.commit()
             clearBoxes()
-            # conn.close()		
-          except:  
+            #conn.close()		
+          except IndexError:  
             warningLabel = Label(warningGrid, text=" Nothing selected ")
             warningLabel.grid(row=0, column=0)
 
@@ -195,15 +203,18 @@ class DatabaseWindow():
           city = 4
         elif cityEntry.get() == "Wellesley":
           city = 5
-        c.execute("""INSERT INTO public.user (user_id, first_name, last_name) VALUES (%s, %s, %s);""", 
-                  (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
-        c.execute("""INSERT INTO public.contact (user_id, mail) VALUES (%s, %s);""",
-                  (idEntry.get(), mailEntry.get(),))
-        c.execute("""INSERT INTO public.user_has_role (user_id, role_id) VALUES (%s, %s);""",
-                  (idEntry.get(), role,))
-        c.execute("""INSERT INTO public.user_has_address (user_id, address_id) VALUES (%s, %s);""",
-                  (idEntry.get(), city,))
-
+        try:
+          c.execute("""INSERT INTO public.user (user_id, first_name, last_name) VALUES (%s, %s, %s);""", 
+                    (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
+          c.execute("""INSERT INTO public.contact (user_id, mail) VALUES (%s, %s);""",
+                    (idEntry.get(), mailEntry.get(),))
+          c.execute("""INSERT INTO public.user_has_role (user_id, role_id) VALUES (%s, %s);""",
+                    (idEntry.get(), role,))
+          c.execute("""INSERT INTO public.user_has_address (user_id, address_id) VALUES (%s, %s);""",
+                    (idEntry.get(), city,))
+        except psycopg2.errors.UniqueViolation:
+          conn.rollback()
+          logging.warning('psycopg2.errors.UniqueViolation')
 
         conn.commit()
         clearBoxes()
@@ -248,7 +259,7 @@ class DatabaseWindow():
           c.execute("""UPDATE public.user_has_role SET role_id = %s WHERE user_id = %s AND role_id = %s;""", (role,idEntry.get(),roleset,))
         except psycopg2.errors.UniqueViolation:
           conn.rollback()
-          print("Log this")
+          logging.warning('psycopg2.errors.UniqueViolation')
 
         conn.commit()
         clearBoxes()

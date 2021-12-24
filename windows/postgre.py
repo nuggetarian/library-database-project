@@ -1,8 +1,13 @@
 from tkinter import mainloop
 import psycopg2
 import bcrypt
+import logging
+
 
 class Postgres:
+  logging.basicConfig(filename="logfile.log",
+                      filemode='a',
+                      format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
   DB_HOST = "localhost"
   DB_NAME = "library-db"
@@ -41,6 +46,7 @@ class Postgres:
         return False
     except IndexError:
       conn.rollback()
+      logging.warning('IndexError: Non-Existent Mail')
       return "Non-Existent Mail"
 
     c.close()
