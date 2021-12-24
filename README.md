@@ -77,6 +77,7 @@ Password: batman
 
 - ~~Licenses of external libraries~~
   - ~~https://github.com/raimon49/pip-licenses~~
+  - ~~pip install -U pip-licenses~~
   - ~~pip-licenses --order=license --format=html~~
 
 # Some Info
