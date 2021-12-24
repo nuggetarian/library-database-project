@@ -51,7 +51,7 @@ Password: batman
 
 - ~~Detailný view na jednu entitu (použiť JOIN)~~
 
-- Transaction rollback atd.
+- ~~Transaction rollback atd.~~
 
 - Filter napríklad by Family Name
 
