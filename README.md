@@ -57,9 +57,9 @@ Password: batman
 
 - SQL Injection na dummy table
 
-  - Spôsob cez Drop Table
+  - ~~Spôsob cez Drop Table~~
   - Spôsob retrieve viac dát ako treba
-  - Vysvetli dôležitosť preparedStatements
+  - ~~Vysvetli dôležitosť preparedStatements~~
 
 - Back up DB every midnight script
 
