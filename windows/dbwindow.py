@@ -554,6 +554,37 @@ class DatabaseWindow():
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
 
+      def injectTable():
+        try:
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
+          c.execute("SELECT nickname FROM public.sqlinjectiontable1 WHERE first_name = '" + sqlEntry.get() + "';")
+          conn.commit()
+          find = c.fetchall()
+          result = find[0][0]
+          c.close()
+          conn.close()
+          infoLabel4 = ttk.Label(window, text=result).pack(pady=5)
+        except IndexError:
+          logging.warning('IndexError: User Not Found.')
+        except psycopg2.ProgrammingError:
+          infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed/doesn't exist.").pack(pady=5)
+        except psycopg2.errors.UndefinedTable:
+          infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed/doesn't exist.").pack(pady=5)
+      
+      def createInjectionTable():
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
+          c.execute("""CREATE TABLE public.sqlinjectiontable1(user_id INT PRIMARY KEY      NOT NULL,
+                                                              first_name          CHAR(50) NOT NULL,
+                                                              nickname            char(50) NOT NULL
+                                                              );""")
+          c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (1, 'Robert', 'Bob');")
+          conn.commit()
+          c.close()
+          conn.close()
+
+      
       infoLabel1 = ttk.Label(window, text="This is a search bar of an unsecured website.").pack(pady=5)
       textGrid = ttk.Labelframe(window, borderwidth=0)
       textGrid.pack()
@@ -561,7 +592,20 @@ class DatabaseWindow():
       sqlEntry = ttk.Entry(textGrid, width=60)
       sqlEntry.insert(0, "';DROP TABLE public.sqlinjectiontable1;--")
       sqlEntry.grid(row=0, column=1, pady=10)
-      injectButton = ttk.Button(window, text="Inject", style='danger.TButton', command=None, cursor="hand2").pack()
+      injectButton = ttk.Button(window, text="Inject", style='danger.TButton', command=injectTable, cursor="hand2").pack()
       infoLabel2 = ttk.Label(window, text="Just press inject!").pack(pady=10)
+      createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack()
+      
+      def checkTable():
+        try:
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
+          c.execute("select exists(select * from public.sqlinjectiontable1);")
+          if bool(c.rowcount) == True:
+            infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 exists.").pack(pady=5)
+        except psycopg2.errors.UndefinedTable:
+          infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed.").pack(pady=5)
+      
+      
 
       #WHAT TO DO - Simuluj ze tym tlacitkom ides cosi updatnut a nedas tam prepared statement. Opis to v labeli
