@@ -271,7 +271,7 @@ class DatabaseWindow():
         my_tree.delete(*my_tree.get_children())
         readDatabase()          
 
-      def filterLastName():
+      def filterDatabase():
           my_tree.delete(*my_tree.get_children())
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
           c = conn.cursor()
@@ -289,7 +289,9 @@ class DatabaseWindow():
           LEFT JOIN public.address ad ON a.address_id = ad.address_id
           LEFT JOIN public.user_has_role r ON r.user_id = u.user_id
           LEFT JOIN public.role ro ON r.role_id = ro.role_id
-		      WHERE u.last_name = %s;""", (filterEntry.get(),))
+		      WHERE u.last_name = %s OR u.first_name = %s 
+          OR c.mail = %s OR ro.role_type = %s 
+          OR ad.city = %s;""", (filterEntry.get(),filterEntry.get(),filterEntry.get(),filterEntry.get(),filterEntry.get(),))
           conn.commit()
           filtered = c.fetchall()
           global count
@@ -360,7 +362,7 @@ class DatabaseWindow():
       filterGrid.pack()
       filterEntry = Entry(filterGrid, borderwidth=2)
       filterEntry.grid(row=0, column=0, padx=10, pady=10)
-      clearBoxesButton = ttk.Button(filterGrid, text="Filter Last Name", command=filterLastName, cursor="hand2", style='danger.TButton')
+      clearBoxesButton = ttk.Button(filterGrid, text="Filter", command=filterDatabase, cursor="hand2", style='danger.TButton')
       clearBoxesButton.grid(row=0, column=1, padx=5)
 
 
