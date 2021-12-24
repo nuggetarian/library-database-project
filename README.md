@@ -79,6 +79,10 @@ Password: batman
   - ~~https://github.com/raimon49/pip-licenses~~
   - ~~--format=html~~
 
+# Some Info
+
+pip-licenses has been used to generate licenses of external libraries. Unused libraries have been removed from the .html
+
 # Obhajoba - Prezentácia
 
 1. Title slide:
