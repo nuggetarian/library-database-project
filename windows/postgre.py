@@ -40,6 +40,7 @@ class Postgres:
       elif bcrypt.checkpw(password.encode(), result.encode()) == False:
         return False
     except IndexError:
+      conn.rollback()
       return "Non-Existent Mail"
 
     c.close()

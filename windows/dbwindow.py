@@ -247,7 +247,8 @@ class DatabaseWindow():
           c.execute("""UPDATE public.user_has_address SET address_id = %s WHERE user_id = %s;""", (city,idEntry.get(),))
           c.execute("""UPDATE public.user_has_role SET role_id = %s WHERE user_id = %s AND role_id = %s;""", (role,idEntry.get(),roleset,))
         except psycopg2.errors.UniqueViolation:
-          print("Bruh")
+          conn.rollback()
+          print("Log this")
 
         conn.commit()
         clearBoxes()
