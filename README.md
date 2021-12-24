@@ -11,6 +11,8 @@ File -> Preferences -> Binary paths -> Add pgAdmin paths
 
 Make sure the port is set to 5432
 
+Create a database named librarydb
+
 Restore file library
 
 Start the application
@@ -41,9 +43,9 @@ Password: batman
 
 - ~~Bcrypt - skutočná validácia usera na základe hesla (Pop up s nesprávnym heslom)~~
 
-- User rola do databáze (nemôže byť superuser)
+- ~~User rola do databáze (nemôže byť superuser)~~
 
-- Iná schema ako public
+- ~~Iná schema ako public~~
 
 - ~~CRUD (Create, read, update, delete) tlačítka do treeview na aspoň jednu entitu~~
 
@@ -53,7 +55,7 @@ Password: batman
 
 - ~~Transaction rollback atd.~~
 
-- Filter napríklad by Family Name
+- ~~Filter napríklad by Family Name~~
 
 - SQL Injection na dummy table
 
@@ -63,7 +65,7 @@ Password: batman
 
 - Back up DB every midnight script
 
-- Logging (SLF4J Logback), loguj exceptions (avoid log-and-throw antipattern)
+- ~~Logging (SLF4J Logback), loguj exceptions (avoid log-and-throw antipattern)~~
 
 - ~~GitHub~~
 
