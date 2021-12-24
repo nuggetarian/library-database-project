@@ -428,8 +428,8 @@ class DatabaseWindow():
       # Formatovanie stlpcov
       my_tree.column("#0", width=0, stretch = NO)
       my_tree.column("ID", anchor=W, width=70)
-      my_tree.column("Name", anchor=W, width=140)
-      my_tree.column("First Name", anchor=W, width=140)
+      my_tree.column("Name", anchor=W, width=160)
+      my_tree.column("First Name", anchor=W, width=120)
       my_tree.column("Last Name", anchor=W, width=140)
       my_tree.column("Genre", anchor=W, width=140)
       my_tree.column("Year", anchor=W, width=70)
@@ -479,6 +479,7 @@ class DatabaseWindow():
 
       def clearBoxes(): # Funkcia na vycistenie entry boxov, tuto funkciu volame ked cosi pridame alebo zmazeme
         idEntry.delete(0, END)
+        nameEntry.delete(0, END)
         firstNameEntry.delete(0, END)
         lastNameEntry.delete(0, END)
         mailEntry.delete(0, END)
