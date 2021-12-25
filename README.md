@@ -131,3 +131,11 @@ Password: batman
 6. Conclusion:
    – describe what would you change if you would develop such a project next time
    – where did you stuck and what was the most difficult part
+   
+# License
+
+Copyright 2021 Michal Žernovič
+
+Licensed under the [MIT License](LICENSE)
+
+
