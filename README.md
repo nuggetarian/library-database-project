@@ -11,11 +11,13 @@ File -> Preferences -> Binary paths -> Add pgAdmin paths
 
 Make sure the port is set to 5432
 
-Create a database named librarydb, set the following login information
-- user = postgres
-- password = postgres
+Create a server named BPC-BDS, set the following login information:
+- Username: postgres
+- Password: postgres
 
-Restore file library
+Create a database named librarydb
+
+Within the database, restore the file named 'library'
 
 Start the application
 
@@ -54,6 +56,13 @@ Password: batman
 - **bcrypt**
 
   _pip install bcrypt_
+  
+# Auto Back-up
+
+**Make sure that the location of these folders are set in Path!**
+
+- C:\Program Files\PostgreSQL\14\bin
+- C:\Program Files\PostgreSQL\14\lib
 
 # Podmienky
 
@@ -122,3 +131,11 @@ Password: batman
 6. Conclusion:
    – describe what would you change if you would develop such a project next time
    – where did you stuck and what was the most difficult part
+   
+# License
+
+Copyright 2021 Michal Žernovič
+
+Licensed under the [MIT License](LICENSE)
+
+
