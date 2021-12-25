@@ -64,9 +64,9 @@ Password: batman
 - C:\Program Files\PostgreSQL\14\bin
 - C:\Program Files\PostgreSQL\14\lib
 
-Script back_up.bat is set to back up the database into the windows temp folder with the filename 'library'.
+Script [back_up.bat](back_up.bat) is set to back up the database into the windows temp folder with the filename '*library*'.
 
-You need to add this script to task scheduler and set it to midnight everyday. There are pictures in the autobackup folder, as well as the script itself.
+You need to add this script to task scheduler and set it to midnight. There are pictures in the **autobackup** folder, as well as the script itself.
 
 ```bat
 set PGPASSWORD=postgres
@@ -97,7 +97,7 @@ pg_dump -h "localhost" -U "postgres" -f "C:\Windows\Temp\library" "librarydb"
   - Spôsob retrieve viac dát ako treba
   - ~~Vysvetli dôležitosť preparedStatements~~
 
-- Back up DB every midnight script
+- ~~Back up DB every midnight script~~
 
 - ~~Logging (SLF4J Logback), loguj exceptions (avoid log-and-throw antipattern)~~
 
@@ -118,7 +118,7 @@ pg_dump -h "localhost" -U "postgres" -f "C:\Windows\Temp\library" "librarydb"
 
 # Some Info
 
-**pip-licenses** has been used to generate licenses of external libraries. Unused libraries have been removed from the .html
+[pip-licenses](https://github.com/raimon49/pip-licenses) has been used to generate licenses of external libraries. Unused libraries have been removed from the .html
 
 # Obhajoba - Prezentácia
 
