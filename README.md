@@ -56,6 +56,13 @@ Password: batman
 - **bcrypt**
 
   _pip install bcrypt_
+  
+# Auto Back-up
+
+**Make sure that the location of these folders are set in Path!**
+
+- C:\Program Files\PostgreSQL\14\bin
+- C:\Program Files\PostgreSQL\14\lib
 
 # Podmienky
 
