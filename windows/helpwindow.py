@@ -32,5 +32,5 @@ class Help():
     infoLabel4 = ttk.Label(popUp, text="  • Try searching 'Robert' again").pack(anchor="nw")
     infoLabel5 = ttk.Label(popUp, text="  • If you wish to repeat the process, press 'Create sqlinjectiontable1' to create the table again").pack(anchor="nw")
     infoLabel6 = ttk.Label(popUp, text="  • You can verify the deletion by checking pgAdmin 4").pack(anchor="nw")
-
+    infoLabel7 = ttk.Label(popUp, text="';DROP TABLE public.sqlinjectiontable1;--").pack(anchor=CENTER, pady=20)
 
