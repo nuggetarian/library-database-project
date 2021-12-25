@@ -11,11 +11,13 @@ File -> Preferences -> Binary paths -> Add pgAdmin paths
 
 Make sure the port is set to 5432
 
-Create a database named librarydb, set the following login information
-- user = postgres
-- password = postgres
+Create a server named BPC-BDS, set the following login information:
+- Username: postgres
+- Password: postgres
 
-Restore file library
+Create a database named librarydb
+
+Within the database, restore the file named 'library'
 
 Start the application
 
