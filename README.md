@@ -64,7 +64,7 @@ Password: batman
 - C:\Program Files\PostgreSQL\14\bin
 - C:\Program Files\PostgreSQL\14\lib
 
-Script back_up.bat is set to back up the database into the windows temp folder.
+Script back_up.bat is set to back up the database into the windows temp folder with the filename 'library'.
 
 You need to add this script to task scheduler and set it to midnight everyday. There are pictures in the autobackup folder, as well as the script itself.
 
