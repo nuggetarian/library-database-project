@@ -51,7 +51,7 @@ Password: batman
 
 - **psycopg2**
 
-  _pip install psycopg2_
+  _pip install psycopg2_ or *pip install psycopg2-binary*
 
 - **bcrypt**
 
