@@ -11,11 +11,25 @@ File -> Preferences -> Binary paths -> Add pgAdmin paths
 
 Make sure the port is set to 5432
 
-Create a database named librarydb
+Create a database named librarydb, set user = postgres, password = postgres
 
 Restore file library
 
 Start the application
+
+## Alternatively
+
+Clone https://gitlab.com/but-courses/bpc-bds/bpc-bds-db-setup
+
+Run the repository with docker-compose up
+
+Go to the web page: http://localhost/pgadmin4/
+
+Login with the following credentials:
+- Username: johndoe@email.cz
+- Password: postgres
+
+Afterwards follow the steps from the previous method
 
 # Log In
 
