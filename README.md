@@ -140,7 +140,18 @@ pg_dump -h "localhost" -U "postgres" -f "C:\Windows\Temp\library" "librarydb"
 6. Conclusion:
    – describe what would you change if you would develop such a project next time
    – where did you stuck and what was the most difficult part
-   
+
+# Licenses of external libraries in markdown format (because it looks pretty)
+
+| Name              | Version | License                                             |
+|-------------------|---------|-----------------------------------------------------|
+| Pillow            | 8.4.0   | Historical Permission Notice and Disclaimer (HPND)  |
+| bcrypt            | 3.2.0   | Apache Software License                             |
+| lice              | 0.6     | BSD License                                         |
+| psycopg2          | 2.9.2   | GNU Library or Lesser General Public License (LGPL) |
+| psycopg2-binary   | 2.9.2   | GNU Library or Lesser General Public License (LGPL) |
+| ttkbootstrap      | 1.0.0   | MIT License                                         |
+
 # License
 
 Copyright 2021 Michal Žernovič
