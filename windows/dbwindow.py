@@ -652,15 +652,26 @@ class DatabaseWindow():
       That means any user can execute any SQL query they please by typing a special string into the search bar.
       Alwasys use 'Prepared Statements' to prevent that. 
       See 'Help' on how to use this window for learning purposes.""").pack(pady=10)
-      infoLabel2 = ttk.Label(window, text="This is a search bar of an unsecured website.").pack()
       textGrid = ttk.Labelframe(window, borderwidth=0)
       textGrid.pack()
-      sqlLabel = ttk.Label(textGrid, text="Search: ").grid(row=0, column=0)
+      infoLabel2 = ttk.Label(textGrid, text="This is a DROP TABLE method.").grid(row=0, column=1, pady=5)
+      sqlLabel = ttk.Label(textGrid, text="Search: ").grid(row=1, column=0)
       sqlEntry = ttk.Entry(textGrid, width=60)
       sqlEntry.insert(0, "';DROP TABLE public.sqlinjectiontable1;--")
-      sqlEntry.grid(row=0, column=1, pady=10)
-      injectButton = ttk.Button(window, text="Search", style='danger.TButton', command=injectTable, cursor="hand2").pack(pady=5)
+      sqlEntry.grid(row=1, column=1)
+      searchButton = ttk.Button(window, text="Search", style='danger.TButton', command=injectTable, cursor="hand2").pack(pady=5)
       createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack(pady=5)
+
+      # UNION BASED ATTACK
+      
+      textGrid2 = ttk.Labelframe(window, borderwidth=0)
+      textGrid2.pack()
+      infoLabel2 = ttk.Label(textGrid2, text="This is a UNION ATTACK method.").grid(row=0, column=1, pady=5)
+      sqlUnionLabel = ttk.Label(textGrid2, text="Search: ").grid(row=1, column=0)
+      sqlEntry1 = ttk.Entry(textGrid2, width=60)
+      sqlEntry1.insert(0, "' UNION SELECT password FROM public.user;--")
+      sqlEntry1.grid(row=1, column=1)
+      searchButton2 = ttk.Button(window, text="Search", style='danger.TButton', command=None, cursor="hand2").pack(pady=10)
 
       warningGrid = ttk.LabelFrame(window, borderwidth=0)
       warningGrid.pack()
