@@ -36,15 +36,13 @@ class Help():
     infoLabel6 = ttk.Label(popUp, text="  • You can verify the deletion by checking pgAdmin 4").pack(anchor="nw")
     infoLabel7 = ttk.Label(popUp, text="';DROP TABLE public.sqlinjectiontable1;--").pack(anchor=CENTER, pady=20)
 
-    nextButton = ttk.Button(popUp, text="Next", style='danger.TButton', command=lambda:Help.displayHelpSQLUnion(Help, window), cursor="hand2").pack(pady=10)
+    nextButton = ttk.Button(popUp, text="Next", style='danger.TButton', command=lambda:Help.displayHelpSQLUnion(Help, popUp), cursor="hand2").pack(pady=10)
 
-  def displayHelpSQLUnion(self, window):
+  def displayHelpSQLUnion(self, popUp):
     windowAppearance = Window()
-
-    popUp = Toplevel(window)
     for widget in popUp.winfo_children():
           widget.destroy()
-    windowAppearance.centerWindow(popUp, 600, 250)
+    windowAppearance.centerWindow(popUp, 600, 300)
     popUp.title("Help")
     infoLabel = ttk.Label(popUp, text="Union Attack: ", font='bold').pack(anchor=CENTER, pady=15)
     infoLabel1 = ttk.Label(popUp, text="  • This search bar again uses a select query").pack(anchor="nw")
@@ -53,5 +51,4 @@ class Help():
     infoLabel4 = ttk.Label(popUp, text="  • We can guess column names password or username or both, from a table called user").pack(anchor="nw")
     infoLabel5 = ttk.Label(popUp, text="  • We have successfuly retrieved username and password from a database").pack(anchor="nw")
     infoLabel6 = ttk.Label(popUp, text="  • If the website is prone to be injected, then there is a good chance that passwords are not hashed").pack(anchor="nw")
-    infoLabel7 = ttk.Label(popUp, text="';DROP TABLE public.sqlinjectiontable1;--").pack(anchor=CENTER, pady=20)
-
+    infoLabel7 = ttk.Label(popUp, text="' UNION SELECT password FROM public.user;--").pack(anchor=CENTER, pady=20)
