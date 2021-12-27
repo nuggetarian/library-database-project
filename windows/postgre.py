@@ -43,7 +43,8 @@ class Postgres:
       if bcrypt.checkpw(password.encode(), result.encode()) == True:
         return True
       elif bcrypt.checkpw(password.encode(), result.encode()) == False:
-        return False
+        logging.warning('Wrong password entered with ' + mail + ' mail')
+        return False 
     except IndexError:
       conn.rollback()
       logging.warning('IndexError: Non-Existent Mail')

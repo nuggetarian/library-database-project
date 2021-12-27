@@ -498,9 +498,9 @@ class DatabaseWindow():
         nameEntry.delete(0, END)
         firstNameEntry.delete(0, END)
         lastNameEntry.delete(0, END)
-        mailEntry.delete(0, END)
-        cityEntry.delete(0, END)
-        roleEntry.delete(0, END)
+        genreEntry.delete(0, END)
+        yearEntry.delete(0, END)
+        isbnEntry.delete(0, END)
 
       def selectRecord(e): # Funkcia na vyplnenie entry boxov ked zvolime zaznam (klikneme na neho)
           clearBoxes()
@@ -516,9 +516,9 @@ class DatabaseWindow():
             nameEntry.insert(0, values[1])
             firstNameEntry.insert(0, values[2])
             lastNameEntry.insert(0, values[3]) 
-            mailEntry.insert(0, values[4])
-            cityEntry.insert(0, values[5])
-            roleEntry.insert(0, values[6])
+            genreEntry.insert(0, values[4])
+            yearEntry.insert(0, values[5])
+            isbnEntry.insert(0, values[6])
           except: # Ked klikame mimo, nevyhadzuje nam to error, ale napise do konzole "Click."
             print("Click.")
 
@@ -526,15 +526,51 @@ class DatabaseWindow():
           try: # Vymazanie na zaklade id ktore ziskame z pola, ked zvolime nejaky riadok
             x = my_tree.selection()[0]
             my_tree.delete(x)
+            conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+            c = conn.cursor()
+            c.execute("""DELETE FROM public.author_has_book WHERE author_id = %s;""", (idEntry.get(),))
+            c.execute("""DELETE FROM public.author WHERE author_id = %s;""", (idEntry.get(),))
+            c.execute("""DELETE FROM public.book_info WHERE book_id = %s;""", (idEntry.get(),))
+            conn.commit()
             clearBoxes()
-            # conn.close()		
-          except:  
-            warningLabel = Label(warningGrid, text=" Nothing selected ")
+            #conn.close()		
+          except IndexError:  
+            warningLabel = ttk.Label(warningGrid, text="          Nothing selected          ")
+            logging.warning('IndexError: Nothing Selected.')
             warningLabel.grid(row=0, column=0)
 
       def addRecord():
         my_tree.delete(*my_tree.get_children())
         readDatabase()
+
+        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+        c = conn.cursor()
+
+        try:
+          c.execute("""INSERT INTO public.author (author_id, first_name, last_name) VALUES (%s, %s, %s);""", (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
+          c.execute("""INSERT INTO public.book_info (book_id, name, genre, year, isbn) 
+                      VALUES (%s, %s, %s, %s, %s)""", (idEntry.get(), nameEntry.get(), genreEntry.get(), yearEntry.get(), isbnEntry.get(),))
+          c.execute("""INSERT INTO public.author_has_book (author_id, book_id) VALUES (%s, %s);""", (idEntry.get(), idEntry.get(),))
+        except psycopg2.errors.UniqueViolation:
+          conn.rollback()
+          logging.warning('psycopg2.errors.UniqueViolation: Error Adding Record (Duplicate)')
+          duplicateError = ttk.Label(warningGrid, text="      Duplicate ID      ").grid(row=0, column=0)
+        except psycopg2.errors.InvalidTextRepresentation:
+          conn.rollback()
+          logging.warning('psycopg2.errors.InvalidTextRepresentation: Invalid Datatype')
+          invalidDatatypeError = ttk.Label(warningGrid, text="      Invalid Datatype      ").grid(row=0, column=0)
+        except psycopg2.errors.ForeignKeyViolation:
+          conn.rollback()
+          logging.warning('psycopg2.errors.ForeignKeyViolation')
+          foreignKeyError = ttk.Label(warningGrid, text="      Foreign Key Violation      ").grid(row=0, column=0)
+
+        conn.commit()
+        clearBoxes()
+        conn.close()
+
+        my_tree.delete(*my_tree.get_children())
+        readDatabase()
+
 
       dataGrid = ttk.Labelframe(window, borderwidth=0)
       dataGrid.pack(pady=10)
@@ -561,20 +597,20 @@ class DatabaseWindow():
       lastNameEntry = Entry(dataGrid, borderwidth=2)
       lastNameEntry.grid(row=1, column=1, padx=10, pady=10)
 
-      mailLabel = Label(dataGrid, text="Genre")
-      mailLabel.grid(row=1, column=2, padx=10, pady=10)
-      mailEntry = Entry(dataGrid, borderwidth=2)
-      mailEntry.grid(row=1, column=3, padx=10, pady=10)
+      genreLabel = Label(dataGrid, text="Genre")
+      genreLabel.grid(row=1, column=2, padx=10, pady=10)
+      genreEntry = Entry(dataGrid, borderwidth=2)
+      genreEntry.grid(row=1, column=3, padx=10, pady=10)
 
-      cityLabel = Label(dataGrid, text="Year")
-      cityLabel.grid(row=1, column=4, padx=10, pady=10)
-      cityEntry = Entry(dataGrid, borderwidth=2)
-      cityEntry.grid(row=1, column=5, padx=10, pady=10)
+      yearLabel = Label(dataGrid, text="Year")
+      yearLabel.grid(row=1, column=4, padx=10, pady=10)
+      yearEntry = Entry(dataGrid, borderwidth=2)
+      yearEntry.grid(row=1, column=5, padx=10, pady=10)
 
-      roleLabel = Label(dataGrid, text="ISBN")
-      roleLabel.grid(row=2, column=2, padx=10, pady=10)
-      roleEntry = Entry(dataGrid, borderwidth=2)
-      roleEntry.grid(row=2, column=3, padx=10, pady=10)
+      isbnLabel = Label(dataGrid, text="ISBN")
+      isbnLabel.grid(row=2, column=2, padx=10, pady=10)
+      isbnEntry = Entry(dataGrid, borderwidth=2)
+      isbnEntry.grid(row=2, column=3, padx=10, pady=10)
 
       buttonGrid = ttk.Labelframe(window, borderwidth=0)
       buttonGrid.pack()
