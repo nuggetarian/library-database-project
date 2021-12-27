@@ -50,44 +50,44 @@ class DatabaseWindow():
       style.configure("Treeview", rowheight=30)
 
       # Vytvorenie treeview frame-u
-      tree_frame = Frame(window)
-      tree_frame.pack(pady=10)
+      treeFrame = Frame(window)
+      treeFrame.pack(pady=10)
 
       # Vytvorenie scrollbaru
-      tree_scroll = ttk.Scrollbar(tree_frame)
-      tree_scroll.pack(side=RIGHT, fill=Y)
+      scroll = ttk.Scrollbar(treeFrame)
+      scroll.pack(side=RIGHT, fill=Y)
 
       # Vytvorenie treeview
-      my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
-      my_tree.pack()
+      userTree = ttk.Treeview(treeFrame, yscrollcommand=scroll.set, selectmode="extended")
+      userTree.pack()
 
       # Konfiguracia scrollbaru
-      tree_scroll.config(command=my_tree.yview)
+      scroll.config(command=userTree.yview)
 
       # Definovanie stlpcov
-      my_tree['columns'] = ("ID", "First Name", "Last Name", "Mail", "City", "Role")
+      userTree['columns'] = ("ID", "First Name", "Last Name", "Mail", "City", "Role")
 
       # Formatovanie stlpcov
-      my_tree.column("#0", width=0, stretch = NO)
-      my_tree.column("ID", anchor=W, width=70)
-      my_tree.column("First Name", anchor=W, width=140)
-      my_tree.column("Last Name", anchor=W, width=140)
-      my_tree.column("Mail", anchor=W, width=140)
-      my_tree.column("City", anchor=W, width=140)
-      my_tree.column("Role", anchor=W, width=140)
+      userTree.column("#0", width=0, stretch = NO)
+      userTree.column("ID", anchor=W, width=70)
+      userTree.column("First Name", anchor=W, width=140)
+      userTree.column("Last Name", anchor=W, width=140)
+      userTree.column("Mail", anchor=W, width=140)
+      userTree.column("City", anchor=W, width=140)
+      userTree.column("Role", anchor=W, width=140)
 
       # Vytvorenie nadpisov
-      my_tree.heading("#0", text="", anchor=W)
-      my_tree.heading("ID", text="ID", anchor=W)
-      my_tree.heading("First Name", text="First Name", anchor=W)
-      my_tree.heading("Last Name", text="Last Name", anchor=W)
-      my_tree.heading("Mail", text="Mail", anchor=W)
-      my_tree.heading("City", text="City", anchor=W)
-      my_tree.heading("Role", text="Role", anchor=W)
+      userTree.heading("#0", text="", anchor=W)
+      userTree.heading("ID", text="ID", anchor=W)
+      userTree.heading("First Name", text="First Name", anchor=W)
+      userTree.heading("Last Name", text="Last Name", anchor=W)
+      userTree.heading("Mail", text="Mail", anchor=W)
+      userTree.heading("City", text="City", anchor=W)
+      userTree.heading("Role", text="Role", anchor=W)
 
       # Vytvorenie pruhovanych riadkov na zaklade toho ci su liche alebo sude
-      my_tree.tag_configure('oddrow', background="#2b3e50")
-      my_tree.tag_configure('evenrow', background="#111d29")
+      userTree.tag_configure('oddrow', background="#2b3e50")
+      userTree.tag_configure('evenrow', background="#111d29")
 
       def readDatabase():
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
@@ -113,9 +113,9 @@ class DatabaseWindow():
           count = 0
           for record in records:
             if count % 2 == 0:
-              my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5]), tags=('evenrow',))
+              userTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5]), tags=('evenrow',))
             else:
-              my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5]), tags=('oddrow',)) 
+              userTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5]), tags=('oddrow',)) 
             count += 1
           c.close()
           conn.close()
@@ -134,9 +134,9 @@ class DatabaseWindow():
 
           global roleset
           # Zvolenie kliknuteho zaznamu
-          selected = my_tree.focus()
+          selected = userTree.focus()
           # Ziskanie obsahu zaznamu
-          values = my_tree.item(selected, 'values')
+          values = userTree.item(selected, 'values')
 
           # Vpisanie dat do entry boxov
           try:
@@ -162,8 +162,8 @@ class DatabaseWindow():
 
       def removeFromDatabase(): # Funkcia na zmazanie zaznamu
           try: # Vymazanie na zaklade id ktore ziskame z pola, ked zvolime nejaky riadok
-            x = my_tree.selection()[0]
-            my_tree.delete(x)
+            x = userTree.selection()[0]
+            userTree.delete(x)
             conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
             c = conn.cursor()
             c.execute("""DELETE FROM public.user_has_address WHERE user_id = %s""", (idEntry.get(),))
@@ -230,7 +230,7 @@ class DatabaseWindow():
         clearBoxes()
         conn.close()
 
-        my_tree.delete(*my_tree.get_children())
+        userTree.delete(*userTree.get_children())
         readDatabase()
 
       def updateRecord():
@@ -284,11 +284,11 @@ class DatabaseWindow():
         clearBoxes()
         conn.close()
 
-        my_tree.delete(*my_tree.get_children())
+        userTree.delete(*userTree.get_children())
         readDatabase()          
 
       def filterDatabase():
-          my_tree.delete(*my_tree.get_children())
+          userTree.delete(*userTree.get_children())
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
           c = conn.cursor()
 
@@ -314,16 +314,16 @@ class DatabaseWindow():
           count = 0
           for item in filtered:
             if count % 2 == 0:
-              my_tree.insert(parent='', index='end', iid=count, text='', values=(item[0], item[1], item[2], item[3], item[4], item[5]), tags=('evenrow',))
+              userTree.insert(parent='', index='end', iid=count, text='', values=(item[0], item[1], item[2], item[3], item[4], item[5]), tags=('evenrow',))
             else:
-              my_tree.insert(parent='', index='end', iid=count, text='', values=(item[0], item[1], item[2], item[3], item[4], item[5]), tags=('oddrow',)) 
+              userTree.insert(parent='', index='end', iid=count, text='', values=(item[0], item[1], item[2], item[3], item[4], item[5]), tags=('oddrow',)) 
             count += 1
           c.close()
           conn.close()
 
       def refresh():
         clearBoxes()
-        my_tree.delete(*my_tree.get_children())
+        userTree.delete(*userTree.get_children())
         readDatabase()
 
       dataGrid = ttk.Labelframe(window, borderwidth=0)
@@ -386,7 +386,7 @@ class DatabaseWindow():
       warningGrid.pack(pady=5)
 
       # Pri uvolneni tlacidla 1 na mysi sa vykona funkcia select_record a zvoli sa dany zaznam
-      my_tree.bind("<ButtonRelease-1>", selectRecord)
+      userTree.bind("<ButtonRelease-1>", selectRecord)
 
       readDatabase()
 
@@ -424,46 +424,46 @@ class DatabaseWindow():
       style.configure("Treeview", rowheight=30)
 
       # Vytvorenie treeview frame-u
-      tree_frame = Frame(window)
-      tree_frame.pack(pady=10)
+      treeFrame = Frame(window)
+      treeFrame.pack(pady=10)
 
       # Vytvorenie scrollbaru
-      tree_scroll = ttk.Scrollbar(tree_frame)
-      tree_scroll.pack(side=RIGHT, fill=Y)
+      treeFrame = ttk.Scrollbar(treeFrame)
+      treeFrame.pack(side=RIGHT, fill=Y)
 
       # Vytvorenie treeview
-      my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
-      my_tree.pack()
+      bookTree = ttk.Treeview(treeFrame, yscrollcommand=treeFrame.set, selectmode="extended")
+      bookTree.pack()
 
       # Konfiguracia scrollbaru
-      tree_scroll.config(command=my_tree.yview)
+      treeFrame.config(command=bookTree.yview)
 
       # Definovanie stlpcov
-      my_tree['columns'] = ("ID", "Name", "First Name", "Last Name", "Genre", "Year", "ISBN")
+      bookTree['columns'] = ("ID", "Name", "First Name", "Last Name", "Genre", "Year", "ISBN")
 
       # Formatovanie stlpcov
-      my_tree.column("#0", width=0, stretch = NO)
-      my_tree.column("ID", anchor=W, width=70)
-      my_tree.column("Name", anchor=W, width=160)
-      my_tree.column("First Name", anchor=W, width=120)
-      my_tree.column("Last Name", anchor=W, width=140)
-      my_tree.column("Genre", anchor=W, width=140)
-      my_tree.column("Year", anchor=W, width=70)
-      my_tree.column("ISBN", anchor=W, width=140)
+      bookTree.column("#0", width=0, stretch = NO)
+      bookTree.column("ID", anchor=W, width=70)
+      bookTree.column("Name", anchor=W, width=160)
+      bookTree.column("First Name", anchor=W, width=120)
+      bookTree.column("Last Name", anchor=W, width=140)
+      bookTree.column("Genre", anchor=W, width=140)
+      bookTree.column("Year", anchor=W, width=70)
+      bookTree.column("ISBN", anchor=W, width=140)
 
       # Vytvorenie nadpisov
-      my_tree.heading("#0", text="", anchor=W)
-      my_tree.heading("ID", text="ID", anchor=W)
-      my_tree.heading("Name", text="Name", anchor=W)
-      my_tree.heading("First Name", text="First Name", anchor=W)
-      my_tree.heading("Last Name", text="Last Name", anchor=W)
-      my_tree.heading("Genre", text="Genre", anchor=W)
-      my_tree.heading("Year", text="Year", anchor=W)
-      my_tree.heading("ISBN", text="ISBN", anchor=W)
+      bookTree.heading("#0", text="", anchor=W)
+      bookTree.heading("ID", text="ID", anchor=W)
+      bookTree.heading("Name", text="Name", anchor=W)
+      bookTree.heading("First Name", text="First Name", anchor=W)
+      bookTree.heading("Last Name", text="Last Name", anchor=W)
+      bookTree.heading("Genre", text="Genre", anchor=W)
+      bookTree.heading("Year", text="Year", anchor=W)
+      bookTree.heading("ISBN", text="ISBN", anchor=W)
 
       # Vytvorenie pruhovanych riadkov na zaklade toho ci su liche alebo sude
-      my_tree.tag_configure('oddrow', background="#2b3e50")
-      my_tree.tag_configure('evenrow', background="#111d29")
+      bookTree.tag_configure('oddrow', background="#2b3e50")
+      bookTree.tag_configure('evenrow', background="#111d29")
 
       def readDatabase():
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
@@ -486,9 +486,9 @@ class DatabaseWindow():
           count = 0
           for record in records:
             if count % 2 == 0:
-              my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5], record[6]), tags=('evenrow',))
+              bookTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5], record[6]), tags=('evenrow',))
             else:
-              my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5], record[6]), tags=('oddrow',)) 
+              bookTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5], record[6]), tags=('oddrow',)) 
             count += 1
           c.close()
           conn.close()
@@ -506,9 +506,9 @@ class DatabaseWindow():
           clearBoxes()
 
           # Zvolenie kliknuteho zaznamu
-          selected = my_tree.focus()
+          selected = bookTree.focus()
           # Ziskanie obsahu zaznamu
-          values = my_tree.item(selected, 'values')
+          values = bookTree.item(selected, 'values')
 
           # Vpisanie dat do entry boxov
           try:
@@ -524,8 +524,8 @@ class DatabaseWindow():
 
       def removeFromDatabase(): # Funkcia na zmazanie zaznamu
           try: # Vymazanie na zaklade id ktore ziskame z pola, ked zvolime nejaky riadok
-            x = my_tree.selection()[0]
-            my_tree.delete(x)
+            x = bookTree.selection()[0]
+            bookTree.delete(x)
             conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
             c = conn.cursor()
             c.execute("""DELETE FROM public.author_has_book WHERE author_id = %s;""", (idEntry.get(),))
@@ -540,7 +540,7 @@ class DatabaseWindow():
             warningLabel.grid(row=0, column=0)
 
       def addRecord():
-        my_tree.delete(*my_tree.get_children())
+        bookTree.delete(*bookTree.get_children())
         readDatabase()
 
         conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
@@ -568,7 +568,7 @@ class DatabaseWindow():
         clearBoxes()
         conn.close()
 
-        my_tree.delete(*my_tree.get_children())
+        bookTree.delete(*bookTree.get_children())
         readDatabase()
 
 
@@ -625,7 +625,7 @@ class DatabaseWindow():
       warningGrid.pack(pady=5)
 
       # Pri uvolneni tlacidla 1 na mysi sa vykona funkcia select_record a zvoli sa dany zaznam
-      my_tree.bind("<ButtonRelease-1>", selectRecord)
+      bookTree.bind("<ButtonRelease-1>", selectRecord)
 
       readDatabase()          
 

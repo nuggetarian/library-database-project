@@ -16,7 +16,7 @@ window.title("bpc-bds-project3")
 window.iconbitmap("vut.ico")
 
 loginPage.loginPage(window)
-window.mainloop() 
+window.mainloop()
 
 # TO DO
 # zmenit file na window a dat tam windows na sql attack, tabulku s knizkami
