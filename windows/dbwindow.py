@@ -57,8 +57,6 @@ class DatabaseWindow():
       tree_scroll = ttk.Scrollbar(tree_frame)
       tree_scroll.pack(side=RIGHT, fill=Y)
 
-    
-
       # Vytvorenie treeview
       my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
       my_tree.pack()
@@ -176,8 +174,8 @@ class DatabaseWindow():
             clearBoxes()
             #conn.close()		
           except IndexError:  
-            warningLabel = Label(warningGrid, text=" Nothing selected ")
-            logging.warning('IndexError')
+            warningLabel = ttk.Label(warningGrid, text="          Nothing selected          ")
+            logging.warning('IndexError: Nothing Selected.')
             warningLabel.grid(row=0, column=0)
 
       def addRecord():
@@ -217,7 +215,16 @@ class DatabaseWindow():
                     (idEntry.get(), city,))
         except psycopg2.errors.UniqueViolation:
           conn.rollback()
-          logging.warning('psycopg2.errors.UniqueViolation')
+          logging.warning('psycopg2.errors.UniqueViolation: Error Adding Record (Duplicate)')
+          duplicateError = ttk.Label(warningGrid, text="      Duplicate ID      ").grid(row=0, column=0)
+        except psycopg2.errors.InvalidTextRepresentation:
+          conn.rollback()
+          logging.warning('psycopg2.errors.InvalidTextRepresentation: Invalid Datatype')
+          invalidDatatypeError = ttk.Label(warningGrid, text="      Invalid Datatype      ").grid(row=0, column=0)
+        except psycopg2.errors.ForeignKeyViolation:
+          conn.rollback()
+          logging.warning('psycopg2.errors.ForeignKeyViolation')
+          foreignKeyError = ttk.Label(warningGrid, text="      Foreign Key Violation      ").grid(row=0, column=0)
 
         conn.commit()
         clearBoxes()
@@ -263,6 +270,15 @@ class DatabaseWindow():
         except psycopg2.errors.UniqueViolation:
           conn.rollback()
           logging.warning('psycopg2.errors.UniqueViolation')
+          duplicateError = ttk.Label(warningGrid, text="      Unique Violation      ").grid(row=0, column=0)
+        except psycopg2.errors.InvalidTextRepresentation:
+          conn.rollback()
+          logging.warning('psycopg2.errors.InvalidTextRepresentation: Invalid Datatype')
+          invalidDatatypeError = ttk.Label(warningGrid, text="      Invalid Datatype      ").grid(row=0, column=0)
+        except psycopg2.errors.ForeignKeyViolation:
+          conn.rollback()
+          logging.warning('psycopg2.errors.ForeignKeyViolation')
+          foreignKeyError = ttk.Label(warningGrid, text="      Foreign Key Violation      ").grid(row=0, column=0)
 
         conn.commit()
         clearBoxes()
