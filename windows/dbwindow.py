@@ -396,17 +396,21 @@ class DatabaseWindow():
       readDatabase()
 
   def viewBooks(self, window):
+      # Destroying widgets to have a blank window
       for widget in window.winfo_children():
           widget.destroy()
 
+      # Constants used to connect to database
       DB_HOST = "localhost"
       DB_NAME = "librarydb"
       DB_USER = "postgres"
       DB_PASS = "postgres"
       
+      # Setting up window resolution
       windowAppearance = Window()
       windowAppearance.centerWindow(window, 900, 600)
 
+      # Function to open a relevant song
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
 
@@ -414,39 +418,40 @@ class DatabaseWindow():
       menu = Menu(window)
       window.config(menu=menu)
 
+      # Function to open a relevant song
       subMenu = Menu(menu)
       menu.add_cascade(label="Window", menu=subMenu)
       subMenu.add_command(label="User Info", background="white", foreground="black", command=lambda:db.viewUsers(window))
       subMenu.add_command(label="SQL Injection", background="white", foreground="black", command=lambda:db.sqlInjection(window))
-
+      
+      # Function to open Help
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
   
-
-      # Set Treeview style
+      # Setting the style of our treeview
       style = Style('superhero')
       style.configure("Treeview", rowheight=30)
 
-      # Vytvorenie treeview frame-u
+      # Creating treeview frame
       treeFrame = Frame(window)
       treeFrame.pack(pady=10)
 
-      # Vytvorenie scrollbaru
+      # Creating the scrollbar
       treeFrame = ttk.Scrollbar(treeFrame)
       treeFrame.pack(side=RIGHT, fill=Y)
 
-      # Vytvorenie treeview
+      # Creating the treeview
       bookTree = ttk.Treeview(treeFrame, yscrollcommand=treeFrame.set, selectmode="extended")
       bookTree.pack()
 
-      # Konfiguracia scrollbaru
+      # Configuration of our scrollbar
       treeFrame.config(command=bookTree.yview)
 
-      # Definovanie stlpcov
+      # Defining our columns
       bookTree['columns'] = ("ID", "Name", "First Name", "Last Name", "Genre", "Year", "ISBN")
 
-      # Formatovanie stlpcov
+      # Formatting our columns 
       bookTree.column("#0", width=0, stretch = NO)
       bookTree.column("ID", anchor=W, width=70)
       bookTree.column("Name", anchor=W, width=160)
@@ -456,7 +461,7 @@ class DatabaseWindow():
       bookTree.column("Year", anchor=W, width=70)
       bookTree.column("ISBN", anchor=W, width=140)
 
-      # Vytvorenie nadpisov
+      # Creating headings with the names of our columns
       bookTree.heading("#0", text="", anchor=W)
       bookTree.heading("ID", text="ID", anchor=W)
       bookTree.heading("Name", text="Name", anchor=W)
@@ -466,14 +471,13 @@ class DatabaseWindow():
       bookTree.heading("Year", text="Year", anchor=W)
       bookTree.heading("ISBN", text="ISBN", anchor=W)
 
-      # Vytvorenie pruhovanych riadkov na zaklade toho ci su liche alebo sude
+      # Diferentiating between an odd row and even row with different colors
       bookTree.tag_configure('oddrow', background="#2b3e50")
       bookTree.tag_configure('evenrow', background="#111d29")
 
       def readDatabase():
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
           c = conn.cursor()
-
           c.execute("""SELECT b.book_id,
                               b.name,
                               a.first_name,
@@ -489,6 +493,7 @@ class DatabaseWindow():
           records = c.fetchall()
           global count
           count = 0
+          # Inserting fetched items into the treeview, based on even row and odd row
           for record in records:
             if count % 2 == 0:
               bookTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5], record[6]), tags=('evenrow',))
@@ -498,7 +503,7 @@ class DatabaseWindow():
           c.close()
           conn.close()
 
-      def clearBoxes(): # Funkcia na vycistenie entry boxov, tuto funkciu volame ked cosi pridame alebo zmazeme
+      def clearBoxes(): # Function to clear entry boxes
         idEntry.delete(0, END)
         nameEntry.delete(0, END)
         firstNameEntry.delete(0, END)
@@ -507,15 +512,13 @@ class DatabaseWindow():
         yearEntry.delete(0, END)
         isbnEntry.delete(0, END)
 
-      def selectRecord(e): # Funkcia na vyplnenie entry boxov ked zvolime zaznam (klikneme na neho)
+      def selectRecord(e): # Function to fill entry boxes with selected item
           clearBoxes()
-
-          # Zvolenie kliknuteho zaznamu
+          # Focus on the selected item and its values
           selected = bookTree.focus()
-          # Ziskanie obsahu zaznamu
           values = bookTree.item(selected, 'values')
 
-          # Vpisanie dat do entry boxov
+          # Selected item gets its values written into the entry boxes
           try:
             idEntry.insert(0, values[0])
             nameEntry.insert(0, values[1])
@@ -524,11 +527,11 @@ class DatabaseWindow():
             genreEntry.insert(0, values[4])
             yearEntry.insert(0, values[5])
             isbnEntry.insert(0, values[6])
-          except: # Ked klikame mimo, nevyhadzuje nam to error, ale napise do konzole "Click."
+          except: # If we click someplace without an item, we get this printed to console - doesn't affect the funcionality of the program
             print("Click.")
 
-      def removeFromDatabase(): # Funkcia na zmazanie zaznamu
-          try: # Vymazanie na zaklade id ktore ziskame z pola, ked zvolime nejaky riadok
+      def removeFromDatabase(): # Function to remove records
+          try: # Removes the selected item
             x = bookTree.selection()[0]
             bookTree.delete(x)
             conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
@@ -538,25 +541,30 @@ class DatabaseWindow():
             c.execute("""DELETE FROM public.book_info WHERE book_id = %s;""", (idEntry.get(),))
             conn.commit()
             clearBoxes()
-            #conn.close()		
+            conn.close()
+          # Exception that is logged, transaction rollback is applied and a message is displayed 	
           except IndexError:  
             warningLabel = ttk.Label(warningGrid, text="          Nothing selected          ")
             conn.rollback()
             logging.warning('IndexError: Nothing Selected.')
             warningLabel.grid(row=0, column=0)
 
+      # Function to add a new book
       def addRecord():
+        # Deletes all entries to make sure the screen updates when a book is added
         bookTree.delete(*bookTree.get_children())
         readDatabase()
-
-        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-        c = conn.cursor()
-
         try:
+          # Connection, cursor and queries
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
           c.execute("""INSERT INTO public.author (author_id, first_name, last_name) VALUES (%s, %s, %s);""", (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
           c.execute("""INSERT INTO public.book_info (book_id, name, genre, year, isbn) 
                       VALUES (%s, %s, %s, %s, %s)""", (idEntry.get(), nameEntry.get(), genreEntry.get(), yearEntry.get(), isbnEntry.get(),))
           c.execute("""INSERT INTO public.author_has_book (author_id, book_id) VALUES (%s, %s);""", (idEntry.get(), idEntry.get(),))
+          conn.commit()
+          conn.close()
+        # Exceptions that are logged, transaction rollback is applied and a message is displayed
         except psycopg2.errors.UniqueViolation:
           conn.rollback()
           logging.warning('psycopg2.errors.UniqueViolation: Error Adding Record (Duplicate)')
@@ -570,19 +578,16 @@ class DatabaseWindow():
           logging.warning('psycopg2.errors.ForeignKeyViolation')
           foreignKeyError = ttk.Label(warningGrid, text="      Foreign Key Violation      ").grid(row=0, column=0)
 
-        conn.commit()
         clearBoxes()
-        conn.close()
-
+        # Deletes elements from screen and reads them again
         bookTree.delete(*bookTree.get_children())
         readDatabase()
 
-
+      # Grid to put every entry box to
       dataGrid = ttk.Labelframe(window, borderwidth=0)
       dataGrid.pack(pady=10)
 
-      #data_frame.pack(fill="x", expand="yes", padx=20)
-
+      # Labels and entry boxes to Edit and Add entries, put into the grid
       idLabel = Label(dataGrid, text="ID")
       idLabel.grid(row=0, column=0, padx=10, pady=10)
       idEntry = Entry(dataGrid, borderwidth=2)
@@ -618,6 +623,7 @@ class DatabaseWindow():
       isbnEntry = Entry(dataGrid, borderwidth=2)
       isbnEntry.grid(row=2, column=3, padx=10, pady=10)
 
+      # Buttons used to control the database
       buttonGrid = ttk.Labelframe(window, borderwidth=0)
       buttonGrid.pack()
       addRecordButton = ttk.Button(buttonGrid, text="Add", command=addRecord, cursor="hand2", style='danger.TButton')
@@ -630,7 +636,7 @@ class DatabaseWindow():
       warningGrid = ttk.Labelframe(window, borderwidth=0)
       warningGrid.pack(pady=5)
 
-      # Pri uvolneni tlacidla 1 na mysi sa vykona funkcia select_record a zvoli sa dany zaznam
+      # When mouse button 1 is released, selectRecord function happens
       bookTree.bind("<ButtonRelease-1>", selectRecord)
 
       readDatabase()          
@@ -675,6 +681,7 @@ class DatabaseWindow():
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
       helpMenu.add_command(label="Actual Help", command=openHelp, background="white", foreground="black")
       
+      # Function to create sqlinjectiontable1
       def createInjectionTable():
           try:
             conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
