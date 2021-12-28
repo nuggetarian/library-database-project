@@ -280,6 +280,10 @@ class DatabaseWindow():
           conn.rollback()
           logging.warning('psycopg2.errors.ForeignKeyViolation')
           foreignKeyError = ttk.Label(warningGrid, text="      Foreign Key Violation      ").grid(row=0, column=0)
+        except NameError:
+          conn.rollback()
+          logging.warning('NameError: Roleset not defined ')
+          foreignKeyError = ttk.Label(warningGrid, text="      NameError: Roleset not defined      ").grid(row=0, column=0)
 
         conn.commit()
         clearBoxes()
