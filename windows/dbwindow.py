@@ -645,7 +645,7 @@ class DatabaseWindow():
       DB_PASS = "postgres"
 
       windowAppearance = Window()
-      windowAppearance.centerWindow(window, 700, 600)
+      windowAppearance.centerWindow(window, 700, 700)
 
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
@@ -668,7 +668,7 @@ class DatabaseWindow():
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
       helpMenu.add_command(label="Actual Help", command=openHelp, background="white", foreground="black")
 
-      def injectTable():
+      """def injectTable():
         try:
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
           c = conn.cursor()
@@ -690,7 +690,7 @@ class DatabaseWindow():
         except psycopg2.errors.UndefinedTable:
           conn.rollback()
           infoLabel3 = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.")
-          infoLabel3.grid(row=0, column=0)
+          infoLabel3.grid(row=0, column=0)"""
       
       def createInjectionTable():
           try:
@@ -701,6 +701,8 @@ class DatabaseWindow():
                                                                 nickname            char(50) NOT NULL
                                                                 );""")
             c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (1, 'Robert', 'Bob');")
+            c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (2, 'Peter', 'Pete');")
+            c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (3, 'Michael', 'Mike');")
             conn.commit()
             c.close()
             conn.close()
@@ -708,44 +710,90 @@ class DatabaseWindow():
             conn.rollback()
             logging.warning('psycopg2.errors.DuplicateTable: relation already exists.')
 
-      
-      infoLabel1 = ttk.Label(window, text="""      This particural window doesn't use 'Prepared Statements'. 
-      That means any user can execute any SQL query they please by typing a special string into the search bar.
-      Alwasys use 'Prepared Statements' to prevent that. 
-      See 'Help' on how to use this window for learning purposes.""").pack(pady=10)
+      def readDatabase(entry):
+        try:
+          sqlTree.delete(*sqlTree.get_children())
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
+
+          c.execute("SELECT * FROM public.sqlinjectiontable1 WHERE first_name = '" + entry + "';")
+          conn.commit()
+          records = c.fetchall()
+          global count
+          count = 0
+          for record in records:
+            if count % 2 == 0:
+              sqlTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2]), tags=('evenrow',))
+            else:
+              sqlTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2]), tags=('oddrow',)) 
+            count += 1
+          c.close()
+          conn.close()
+        except:
+          logging.warning("tkinter.TclError: Item 0 already exists")
+
+      sqlEntry2 = ttk.Entry(window, width=60)
+      sqlEntry2.pack()
+      searchButton1 = ttk.Button(window, text="Search", style='danger.TButton', command=lambda:readDatabase(sqlEntry2.get()), cursor="hand2").pack(pady=5)
+
       textGrid = ttk.Labelframe(window, borderwidth=0)
       textGrid.pack()
       infoLabel2 = ttk.Label(textGrid, text="This is a DROP TABLE method.").grid(row=0, column=1, pady=5)
-      sqlLabel = ttk.Label(textGrid, text="Search: ").grid(row=1, column=0)
       sqlEntry = ttk.Entry(textGrid, width=60)
       sqlEntry.insert(0, "';DROP TABLE public.sqlinjectiontable1;--")
       sqlEntry.grid(row=1, column=1)
-      searchButton = ttk.Button(window, text="Search", style='danger.TButton', command=injectTable, cursor="hand2").pack(pady=5)
-      createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack(pady=5)
+      searchButton = ttk.Button(window, text="Search", style='danger.TButton', command=lambda:readDatabase(sqlEntry.get()), cursor="hand2").pack(pady=5)
 
-      # UNION BASED ATTACK
-      
+      # 1 = 1 Attack
       textGrid2 = ttk.Labelframe(window, borderwidth=0)
       textGrid2.pack()
-      infoLabel2 = ttk.Label(textGrid2, text="This is a UNION ATTACK method.").grid(row=0, column=1, pady=5)
-      sqlUnionLabel = ttk.Label(textGrid2, text="Search: ").grid(row=1, column=0)
+      infoLabel2 = ttk.Label(textGrid2, text="This is a 1=1 method.").grid(row=0, column=1, pady=5)
       sqlEntry1 = ttk.Entry(textGrid2, width=60)
-      sqlEntry1.insert(0, "' UNION SELECT password FROM public.user;--")
+      sqlEntry1.insert(0, "' OR 1=1;--")
       sqlEntry1.grid(row=1, column=1)
-      searchButton2 = ttk.Button(window, text="Search", style='danger.TButton', command=None, cursor="hand2").pack(pady=10)
+      searchButton2 = ttk.Button(window, text="Search", style='danger.TButton', command=lambda:readDatabase(sqlEntry1.get()), cursor="hand2").pack(pady=10)
+      createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack(pady=5)
 
       warningGrid = ttk.LabelFrame(window, borderwidth=0)
       warningGrid.pack()
+      
+      # Set Treeview style
+      style = Style('superhero')
+      style.configure("Treeview", rowheight=30)
 
-      """def checkTable():
-        try:
-          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-          c = conn.cursor()
-          c.execute("select exists(select * from public.sqlinjectiontable1);")
-          if bool(c.rowcount) == True:
-            infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 exists.").pack(pady=5)
-        except psycopg2.errors.UndefinedTable:
-          infoLabel3 = ttk.Label(window, text="Table sqlinjectiontable1 has been removed.").pack(pady=5)"""
+      # Vytvorenie treeview frame-u
+      treeFrame = Frame(window)
+      treeFrame.pack(pady=10)
+
+      # Vytvorenie scrollbaru
+      scroll = ttk.Scrollbar(treeFrame)
+      scroll.pack(side=RIGHT, fill=Y)
+
+      # Vytvorenie treeview
+      sqlTree = ttk.Treeview(treeFrame, yscrollcommand=scroll.set, selectmode="extended")
+      sqlTree.pack()
+
+      # Konfiguracia scrollbaru
+      scroll.config(command=sqlTree.yview)
+
+      # Definovanie stlpcov
+      sqlTree['columns'] = ("ID", "First Name", "Nickname")
+
+      # Formatovanie stlpcov
+      sqlTree.column("#0", width=0, stretch = NO)
+      sqlTree.column("ID", anchor=W, width=70)
+      sqlTree.column("First Name", anchor=W, width=140)
+      sqlTree.column("Nickname", anchor=W, width=140)
+
+      # Vytvorenie nadpisov
+      sqlTree.heading("#0", text="", anchor=W)
+      sqlTree.heading("ID", text="ID", anchor=W)
+      sqlTree.heading("First Name", text="First Name", anchor=W)
+      sqlTree.heading("Nickname", text="Nickname", anchor=W)
+
+      # Vytvorenie pruhovanych riadkov na zaklade toho ci su liche alebo sude
+      sqlTree.tag_configure('oddrow', background="#2b3e50")
+      sqlTree.tag_configure('evenrow', background="#111d29")
       
       
       #Do Helpu napis ze vyhladavas Roberta a najde ti jeho nickname. "Try searching it again" 
