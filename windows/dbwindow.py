@@ -175,6 +175,7 @@ class DatabaseWindow():
             #conn.close()		
           except IndexError:  
             warningLabel = ttk.Label(warningGrid, text="          Nothing selected          ")
+            conn.rollback()
             logging.warning('IndexError: Nothing Selected.')
             warningLabel.grid(row=0, column=0)
 
@@ -536,6 +537,7 @@ class DatabaseWindow():
             #conn.close()		
           except IndexError:  
             warningLabel = ttk.Label(warningGrid, text="          Nothing selected          ")
+            conn.rollback()
             logging.warning('IndexError: Nothing Selected.')
             warningLabel.grid(row=0, column=0)
 
@@ -675,11 +677,14 @@ class DatabaseWindow():
           infoLabel4 = ttk.Label(warningGrid, text="                     " + result+  "                      ")
           infoLabel4.grid(row=0, column=0)
         except IndexError:
+          conn.rollback()
           logging.warning('IndexError: User Not Found.')
         except psycopg2.ProgrammingError:
+          conn.rollback()
           infoLabel3 = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.")
           infoLabel3.grid(row=0, column=0)
         except psycopg2.errors.UndefinedTable:
+          conn.rollback()
           infoLabel3 = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.")
           infoLabel3.grid(row=0, column=0)
       
