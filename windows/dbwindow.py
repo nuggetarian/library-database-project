@@ -636,20 +636,25 @@ class DatabaseWindow():
       readDatabase()          
 
   def sqlInjection(self, window):
+      # Destroying widgets to have a blank window
       for widget in window.winfo_children():
           widget.destroy()
 
+      # Constants used to connect to database
       DB_HOST = "localhost"
       DB_NAME = "librarydb"
       DB_USER = "postgres"
       DB_PASS = "postgres"
 
+      # Setting up window resolution
       windowAppearance = Window()
       windowAppearance.centerWindow(window, 700, 700)
 
+      # Function to open a relevant song
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
 
+      # Function to open Help
       def openHelp():
         helpWindow = Help()
         helpWindow.displayHelpSQL(window)
@@ -658,39 +663,17 @@ class DatabaseWindow():
       menu = Menu(window)
       window.config(menu=menu)
 
+      # Toolbar where Windows can be accessed
       subMenu = Menu(menu)
       menu.add_cascade(label="Window", menu=subMenu)
       subMenu.add_command(label="User Info", background="white", foreground="black", command=lambda:db.viewUsers(window))
       subMenu.add_command(label="Book Info", background="white", foreground="black", command=lambda:db.viewBooks(window))
 
+      # Toolbar where Help can be accessed
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
       helpMenu.add_command(label="Actual Help", command=openHelp, background="white", foreground="black")
-
-      """def injectTable():
-        try:
-          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-          c = conn.cursor()
-          c.execute("SELECT nickname FROM public.sqlinjectiontable1 WHERE first_name = '" + sqlEntry.get() + "';")
-          conn.commit()
-          find = c.fetchall()
-          result = find[0][0]
-          c.close()
-          conn.close()
-          infoLabel4 = ttk.Label(warningGrid, text="                     " + result+  "                      ")
-          infoLabel4.grid(row=0, column=0)
-        except IndexError:
-          conn.rollback()
-          logging.warning('IndexError: User Not Found.')
-        except psycopg2.ProgrammingError:
-          conn.rollback()
-          infoLabel3 = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.")
-          infoLabel3.grid(row=0, column=0)
-        except psycopg2.errors.UndefinedTable:
-          conn.rollback()
-          infoLabel3 = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.")
-          infoLabel3.grid(row=0, column=0)"""
       
       def createInjectionTable():
           try:
@@ -707,22 +690,27 @@ class DatabaseWindow():
             conn.commit()
             c.close()
             conn.close()
-            exceptionLabel = ttk.Label(warningGrid, text="                                                              ").grid(row=0, column=0)
+            # Label to clear the place where error messages are displayed
+            exceptionLabel = ttk.Label(warningGrid, text="                                                                                 ").grid(row=0, column=0)
+          # Exception that is logged, transaction rollback is applied and a message is displayed
           except psycopg2.errors.DuplicateTable:
             conn.rollback()
             logging.warning('psycopg2.errors.DuplicateTable: relation already exists.')
 
+      # Reads the database to get our dummy table
       def readDatabase(entry):
         try:
-          sqlTree.delete(*sqlTree.get_children())
+          # Label to clear the place where error messages are displayed
+          exceptionLabel = ttk.Label(warningGrid, text="                                                                                 ").grid(row=0, column=0)
+          sqlTree.delete(*sqlTree.get_children()) # Clears the display
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
           c = conn.cursor()
-
           c.execute("SELECT * FROM public.sqlinjectiontable1 WHERE first_name = '" + entry + "';")
           conn.commit()
           records = c.fetchall()
           global count
           count = 0
+          # Inserting fetched items into the treeview, based on even row and odd row
           for record in records:
             if count % 2 == 0:
               sqlTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2]), tags=('evenrow',))
@@ -731,12 +719,15 @@ class DatabaseWindow():
             count += 1
           c.close()
           conn.close()
+        # Exceptions that are logged, transaction rollback is applied and a message is displayed
         except psycopg2.ProgrammingError:
+          conn.rollback()
           logging.warning("psycopg2.ProgrammingError: no results to fetch")
           exceptionLabel = ttk.Label(warningGrid, text="No results to fetch. (Table deleted)").grid(row=0, column=0)
         except IndexError:
           conn.rollback()
           logging.warning('IndexError: User Not Found.')
+          exceptionLabel = ttk.Label(warningGrid, text="IndexError: User Not Found.").grid(row=0, column=0)
         except psycopg2.ProgrammingError:
           conn.rollback()
           logging.warning("psycopg2.ProgrammingError: Table sqlinjectiontable1 has been removed/doesn't exist.")
