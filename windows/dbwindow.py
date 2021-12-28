@@ -703,9 +703,11 @@ class DatabaseWindow():
             c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (1, 'Robert', 'Bob');")
             c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (2, 'Peter', 'Pete');")
             c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (3, 'Michael', 'Mike');")
+            c.execute("INSERT INTO public.sqlInjectiontable1 (user_id, first_name, nickname) VALUES (4, 'Daniel', 'Dan');")
             conn.commit()
             c.close()
             conn.close()
+            exceptionLabel = ttk.Label(warningGrid, text="                                                              ").grid(row=0, column=0)
           except psycopg2.errors.DuplicateTable:
             conn.rollback()
             logging.warning('psycopg2.errors.DuplicateTable: relation already exists.')
@@ -729,72 +731,85 @@ class DatabaseWindow():
             count += 1
           c.close()
           conn.close()
-        except:
-          logging.warning("tkinter.TclError: Item 0 already exists")
+        except psycopg2.ProgrammingError:
+          logging.warning("psycopg2.ProgrammingError: no results to fetch")
+          exceptionLabel = ttk.Label(warningGrid, text="No results to fetch. (Table deleted)").grid(row=0, column=0)
+        except IndexError:
+          conn.rollback()
+          logging.warning('IndexError: User Not Found.')
+        except psycopg2.ProgrammingError:
+          conn.rollback()
+          logging.warning("psycopg2.ProgrammingError: Table sqlinjectiontable1 has been removed/doesn't exist.")
+          exceptionLabel = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.").grid(row=0, column=0)
+        except psycopg2.errors.UndefinedTable:
+          conn.rollback()
+          logging.warning("psycopg2.errors.UndefinedTable: Table sqlinjectiontable1 has been removed/doesn't exist.")
+          exceptionLabel = ttk.Label(warningGrid, text="Table sqlinjectiontable1 has been removed/doesn't exist.").grid(row=0, column=0)
 
+      # Entry box intended to search the database
       sqlEntry2 = ttk.Entry(window, width=60)
-      sqlEntry2.pack()
-      searchButton1 = ttk.Button(window, text="Search", style='danger.TButton', command=lambda:readDatabase(sqlEntry2.get()), cursor="hand2").pack(pady=5)
+      sqlEntry2.pack(pady=10)
+      # Button to search
+      searchButton1 = ttk.Button(window, text="Search", style='danger.TButton', command=lambda:readDatabase(sqlEntry2.get()), cursor="hand2").pack(pady=10)
 
-      textGrid = ttk.Labelframe(window, borderwidth=0)
-      textGrid.pack()
-      infoLabel2 = ttk.Label(textGrid, text="This is a DROP TABLE method.").grid(row=0, column=1, pady=5)
-      sqlEntry = ttk.Entry(textGrid, width=60)
+      # Drop Table Attack
+      infoLabel2 = ttk.Label(window, text="This is a DROP TABLE method.").pack()
+      # Entry box intended to inject the database with a drop table command
+      sqlEntry = ttk.Entry(window, width=60)
       sqlEntry.insert(0, "';DROP TABLE public.sqlinjectiontable1;--")
-      sqlEntry.grid(row=1, column=1)
-      searchButton = ttk.Button(window, text="Search", style='danger.TButton', command=lambda:readDatabase(sqlEntry.get()), cursor="hand2").pack(pady=5)
+      sqlEntry.pack(pady=10)
+      # Button to execute the command
+      searchButton = ttk.Button(window, text="Search", style='danger.TButton', command=lambda:readDatabase(sqlEntry.get()), cursor="hand2").pack(pady=10)
 
       # 1 = 1 Attack
-      textGrid2 = ttk.Labelframe(window, borderwidth=0)
-      textGrid2.pack()
-      infoLabel2 = ttk.Label(textGrid2, text="This is a 1=1 method.").grid(row=0, column=1, pady=5)
-      sqlEntry1 = ttk.Entry(textGrid2, width=60)
+      infoLabel2 = ttk.Label(window, text="This is a 1=1 method.").pack()
+      # Entry box intended to inject the database by retrieving more data than expected
+      sqlEntry1 = ttk.Entry(window, width=60)
       sqlEntry1.insert(0, "' OR 1=1;--")
-      sqlEntry1.grid(row=1, column=1)
+      sqlEntry1.pack(pady=10)
+      # Button to execute the command
       searchButton2 = ttk.Button(window, text="Search", style='danger.TButton', command=lambda:readDatabase(sqlEntry1.get()), cursor="hand2").pack(pady=10)
+      # Button to create the dummy table again
       createTableButton = ttk.Button(window, text="Create sqlinjectiontable1", style='danger.TButton', command=createInjectionTable, cursor="hand2").pack(pady=5)
-
-      warningGrid = ttk.LabelFrame(window, borderwidth=0)
-      warningGrid.pack()
       
-      # Set Treeview style
+      # Setting the style of our treeview
       style = Style('superhero')
-      style.configure("Treeview", rowheight=30)
+      style.configure("Treeview", rowheight=20)
 
-      # Vytvorenie treeview frame-u
+      # Creating treeview frame
       treeFrame = Frame(window)
       treeFrame.pack(pady=10)
 
-      # Vytvorenie scrollbaru
+      # Creating the scrollbar
       scroll = ttk.Scrollbar(treeFrame)
       scroll.pack(side=RIGHT, fill=Y)
 
-      # Vytvorenie treeview
+      # Creating the treeview
       sqlTree = ttk.Treeview(treeFrame, yscrollcommand=scroll.set, selectmode="extended")
       sqlTree.pack()
 
-      # Konfiguracia scrollbaru
+      # Configuration of our scrollbar
       scroll.config(command=sqlTree.yview)
 
-      # Definovanie stlpcov
+      # Defining our columns
       sqlTree['columns'] = ("ID", "First Name", "Nickname")
 
-      # Formatovanie stlpcov
+      # Formatting our columns 
       sqlTree.column("#0", width=0, stretch = NO)
       sqlTree.column("ID", anchor=W, width=70)
       sqlTree.column("First Name", anchor=W, width=140)
       sqlTree.column("Nickname", anchor=W, width=140)
 
-      # Vytvorenie nadpisov
+      # Creating headings with the names of our columns
       sqlTree.heading("#0", text="", anchor=W)
       sqlTree.heading("ID", text="ID", anchor=W)
       sqlTree.heading("First Name", text="First Name", anchor=W)
       sqlTree.heading("Nickname", text="Nickname", anchor=W)
 
-      # Vytvorenie pruhovanych riadkov na zaklade toho ci su liche alebo sude
+      # Diferentiating between an odd row and even row with different colors
       sqlTree.tag_configure('oddrow', background="#2b3e50")
       sqlTree.tag_configure('evenrow', background="#111d29")
-      
-      
-      #Do Helpu napis ze vyhladavas Roberta a najde ti jeho nickname. "Try searching it again" 
-      #WHAT TO DO - Simuluj ze tym tlacitkom ides cosi updatnut a nedas tam prepared statement. Opis to v labeli
+
+      # Grid for warning messages
+      warningGrid = ttk.LabelFrame(window, borderwidth=0)
+      warningGrid.pack()
