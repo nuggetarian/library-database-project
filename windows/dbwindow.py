@@ -8,6 +8,7 @@ import webbrowser
 import logging
 
 class DatabaseWindow():
+  # Setting up loggers filename, append mode and format
   logging.basicConfig(filename="logfile.log",
                       filemode='a',
                       format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
