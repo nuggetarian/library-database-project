@@ -13,21 +13,27 @@ class DatabaseWindow():
                       filemode='a',
                       format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
+# Window to view, add, delete, update, filter users
   def viewUsers(self, window):
+      # Destroying widgets to have a blank window 
       for widget in window.winfo_children():
           widget.destroy()
 
+      # Constants used to connect to database
       DB_HOST = "localhost"
       DB_NAME = "librarydb"
       DB_USER = "postgres"
       DB_PASS = "postgres"
 
+      # Setting up window resolution
       windowAppearance = Window()
       windowAppearance.centerWindow(window, 850, 700)
 
+      # Function to open a relevant song
       def openWebsite():
         webbrowser.open_new("https://www.youtube.com/watch?v=2Q_ZzBGPdqE")
       
+      # Function to open help window
       def openHelp():
         helpWindow = Help()
         helpWindow.displayHelp(window)
@@ -36,39 +42,41 @@ class DatabaseWindow():
       menu = Menu(window)
       window.config(menu=menu)
 
+      # Toolbar to switch windows
       subMenu = Menu(menu)
       menu.add_cascade(label="Window", menu=subMenu)
       subMenu.add_command(label="Book Info", background="white", foreground="black", command=lambda:db.viewBooks(window))
       subMenu.add_command(label="SQL Injection", background="white", foreground="black", command=lambda:db.sqlInjection(window))
 
+      # Toolbar to open help
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
       helpMenu.add_command(label="Actual Help", command=openHelp, background="white", foreground="black")
 
-      # Set Treeview style
+      # Setting the style of our treeview
       style = Style('superhero')
       style.configure("Treeview", rowheight=30)
 
-      # Vytvorenie treeview frame-u
+      # Creating the frame of our treeview
       treeFrame = Frame(window)
       treeFrame.pack(pady=10)
 
-      # Vytvorenie scrollbaru
+      # Creating a scrollbar
       scroll = ttk.Scrollbar(treeFrame)
       scroll.pack(side=RIGHT, fill=Y)
 
-      # Vytvorenie treeview
+      # Creation of our treeview
       userTree = ttk.Treeview(treeFrame, yscrollcommand=scroll.set, selectmode="extended")
       userTree.pack()
 
-      # Konfiguracia scrollbaru
+      # Config of our scrollbar
       scroll.config(command=userTree.yview)
 
-      # Definovanie stlpcov
+      # Naming our columns
       userTree['columns'] = ("ID", "First Name", "Last Name", "Mail", "City", "Role")
 
-      # Formatovanie stlpcov
+      # Setting up our columns
       userTree.column("#0", width=0, stretch = NO)
       userTree.column("ID", anchor=W, width=70)
       userTree.column("First Name", anchor=W, width=140)
@@ -77,7 +85,7 @@ class DatabaseWindow():
       userTree.column("City", anchor=W, width=140)
       userTree.column("Role", anchor=W, width=140)
 
-      # Vytvorenie nadpisov
+      # Creating the names of our headings
       userTree.heading("#0", text="", anchor=W)
       userTree.heading("ID", text="ID", anchor=W)
       userTree.heading("First Name", text="First Name", anchor=W)
@@ -86,14 +94,15 @@ class DatabaseWindow():
       userTree.heading("City", text="City", anchor=W)
       userTree.heading("Role", text="Role", anchor=W)
 
-      # Vytvorenie pruhovanych riadkov na zaklade toho ci su liche alebo sude
+      # Changing the color of a row depending on the evenness of results
       userTree.tag_configure('oddrow', background="#2b3e50")
       userTree.tag_configure('evenrow', background="#111d29")
 
+      # Function to read our database
       def readDatabase():
+          # Using our constants to connect and creating a cursor
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
           c = conn.cursor()
-
           c.execute("""SELECT DISTINCT
                         u.user_id,
                         u.first_name,
@@ -112,16 +121,18 @@ class DatabaseWindow():
           records = c.fetchall()
           global count
           count = 0
+          # For loop to differentiate odd rows and even rows based on tags 'oddrow' and 'evenrow'
           for record in records:
             if count % 2 == 0:
               userTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5]), tags=('evenrow',))
             else:
               userTree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4], record[5]), tags=('oddrow',)) 
             count += 1
+          # Closing our cursor and connection
           c.close()
           conn.close()
 
-      def clearBoxes(): # Funkcia na vycistenie entry boxov, tuto funkciu volame ked cosi pridame alebo zmazeme
+      def clearBoxes(): # Function to clear entry boxes
         idEntry.delete(0, END)
         firstNameEntry.delete(0, END)
         lastNameEntry.delete(0, END)
@@ -130,16 +141,16 @@ class DatabaseWindow():
         roleEntry.delete(0, END)
         filterEntry.delete(0, END)
 
-      def selectRecord(e): # Funkcia na vyplnenie entry boxov ked zvolime zaznam (klikneme na neho)
+      def selectRecord(e): # Function to fill entry boxes with data when a record is selected (clicked)
           clearBoxes()
 
           global roleset
-          # Zvolenie kliknuteho zaznamu
+          # Focusing on an item
           selected = userTree.focus()
-          # Ziskanie obsahu zaznamu
+          # Getting values
           values = userTree.item(selected, 'values')
 
-          # Vpisanie dat do entry boxov
+          # Filling the entry boxes
           try:
             idEntry.insert(0, values[0])
             firstNameEntry.insert(0, values[1])
@@ -148,6 +159,7 @@ class DatabaseWindow():
             cityEntry.insert(0, values[4])
             roleEntry.insert(0, values[5])
 
+            # If statement for assigning role a number
             if roleEntry.get() == "admin":
               roleset = 1
             elif roleEntry.get() == "manager":
@@ -158,13 +170,13 @@ class DatabaseWindow():
               roleset = 4
             elif roleEntry.get() == "customer":
               roleset = 5
-          except: # Ked klikame mimo, nevyhadzuje nam to error, ale napise do konzole "Click."
+          except: # If we click somewhere without an item, "Click." get printed - this exception doesn't interfere with the funcionality of the program
             print("Click.")
 
-      def removeFromDatabase(): # Funkcia na zmazanie zaznamu
-          try: # Vymazanie na zaklade id ktore ziskame z pola, ked zvolime nejaky riadok
-            x = userTree.selection()[0]
-            userTree.delete(x)
+      def removeFromDatabase(): # Function to delete a record
+          try: # Deletion based on an ID that we got from an entry box 
+            x = userTree.selection()[0] # Selecting an item in the treeview
+            userTree.delete(x) # Deleting it from the screen
             conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
             c = conn.cursor()
             c.execute("""DELETE FROM public.user_has_address WHERE user_id = %s""", (idEntry.get(),))
@@ -173,16 +185,19 @@ class DatabaseWindow():
             c.execute("""DELETE FROM public.user WHERE user_id = %s""", (idEntry.get(),))
             conn.commit()
             clearBoxes()
-            #conn.close()		
+            conn.close()
+          #	Exception if we press delete without selecting, also contains a transaction rollback, log entry and a message is displayed on the screen
           except IndexError:  
             warningLabel = ttk.Label(warningGrid, text="          Nothing selected          ")
             conn.rollback()
             logging.warning('IndexError: Nothing Selected.')
             warningLabel.grid(row=0, column=0)
 
+      # Function to add a record
       def addRecord():
         conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
         c = conn.cursor()
+        # Roles get a number assigned for easier manipulation of data
         role = 0
         if roleEntry.get() == "admin":
           role = 1
@@ -195,6 +210,7 @@ class DatabaseWindow():
         elif roleEntry.get() == "customer":
           role = 5
         
+        # Cities get a number assigned for easier manipulation of data
         city = 0
         if cityEntry.get() == "Jonesboro":
           city = 1
@@ -231,15 +247,16 @@ class DatabaseWindow():
         conn.commit()
         clearBoxes()
         conn.close()
-
+        # Refresh of the treeview
         userTree.delete(*userTree.get_children())
         readDatabase()
 
+      # Function to update a record we select
       def updateRecord():
         conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
         c = conn.cursor()
-        #c.execute("""INSERT INTO public.user (user_id, first_name, last_name) VALUES (%s, %s, %s);""", 
-        #          (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
+
+        # Cities get a number assigned for easier manipulation of data
         city = 0
         if cityEntry.get() == "Jonesboro":
           city = 1
@@ -252,6 +269,7 @@ class DatabaseWindow():
         elif cityEntry.get() == "Wellesley":
           city = 5
 
+        # Roles get a number assigned for easier manipulation of data
         role = 0
         if roleEntry.get() == "admin":
           role = 1
@@ -269,6 +287,7 @@ class DatabaseWindow():
           c.execute("""UPDATE public.contact SET mail = %s WHERE user_id = %s;""", (mailEntry.get(),idEntry.get(),))
           c.execute("""UPDATE public.user_has_address SET address_id = %s WHERE user_id = %s;""", (city,idEntry.get(),))
           c.execute("""UPDATE public.user_has_role SET role_id = %s WHERE user_id = %s AND role_id = %s;""", (role,idEntry.get(),roleset,))
+        # Exceptions that are logged, transaction rollback is applied and a relevant message is displayed
         except psycopg2.errors.UniqueViolation:
           conn.rollback()
           logging.warning('psycopg2.errors.UniqueViolation')
@@ -285,19 +304,19 @@ class DatabaseWindow():
           conn.rollback()
           logging.warning('NameError: Roleset not defined ')
           foreignKeyError = ttk.Label(warningGrid, text="      NameError: Roleset not defined      ").grid(row=0, column=0)
-
         conn.commit()
         clearBoxes()
         conn.close()
-
+        # Refresh of the screen
         userTree.delete(*userTree.get_children())
         readDatabase()          
 
       def filterDatabase():
+          # We delete all the elements from treeview to make some space for our new filtered list
           userTree.delete(*userTree.get_children())
           conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
           c = conn.cursor()
-
+          # We filter basically every string in our joined select
           c.execute("""SELECT DISTINCT
                         u.user_id,
                         u.first_name,
@@ -318,6 +337,7 @@ class DatabaseWindow():
           filtered = c.fetchall()
           global count
           count = 0
+          # Same function as before to differentiate odd rows and even rows based on tags
           for item in filtered:
             if count % 2 == 0:
               userTree.insert(parent='', index='end', iid=count, text='', values=(item[0], item[1], item[2], item[3], item[4], item[5]), tags=('evenrow',))
@@ -327,15 +347,15 @@ class DatabaseWindow():
           c.close()
           conn.close()
 
+      # A refresh function, deletes all items and re-reads the database
       def refresh():
         clearBoxes()
         userTree.delete(*userTree.get_children())
         readDatabase()
 
+      # Grid to easily display Labels and their respective Entry boxes
       dataGrid = ttk.Labelframe(window, borderwidth=0)
       dataGrid.pack(pady=10)
-
-      #data_frame.pack(fill="x", expand="yes", padx=20)
 
       idLabel = Label(dataGrid, text="ID")
       idLabel.grid(row=0, column=0, padx=10, pady=10)
@@ -387,15 +407,16 @@ class DatabaseWindow():
       clearBoxesButton = ttk.Button(filterGrid, text="Filter", command=filterDatabase, cursor="hand2", style='danger.TButton')
       clearBoxesButton.grid(row=0, column=1, padx=5)
 
-
+      # A grid to display warnings in the same place on the screen
       warningGrid = ttk.Labelframe(window, borderwidth=0)
       warningGrid.pack(pady=5)
 
-      # Pri uvolneni tlacidla 1 na mysi sa vykona funkcia select_record a zvoli sa dany zaznam
+      # When mouse button 1 is released, selectRecord function happens
       userTree.bind("<ButtonRelease-1>", selectRecord)
 
       readDatabase()
 
+# Window to view, add and delete books
   def viewBooks(self, window):
       # Destroying widgets to have a blank window
       for widget in window.winfo_children():
@@ -419,13 +440,13 @@ class DatabaseWindow():
       menu = Menu(window)
       window.config(menu=menu)
 
-      # Function to open a relevant song
+      # Toolbar to switch windows
       subMenu = Menu(menu)
       menu.add_cascade(label="Window", menu=subMenu)
       subMenu.add_command(label="User Info", background="white", foreground="black", command=lambda:db.viewUsers(window))
       subMenu.add_command(label="SQL Injection", background="white", foreground="black", command=lambda:db.sqlInjection(window))
       
-      # Function to open Help
+      # Toolbar to open Help
       helpMenu = Menu(menu)
       menu.add_cascade(label="Help", menu=helpMenu)
       helpMenu.add_command(label="Alexa, play The Beatles - Help!", command=openWebsite, background="white", foreground="black")
@@ -642,6 +663,7 @@ class DatabaseWindow():
 
       readDatabase()          
 
+# Window with SQL Injection playground
   def sqlInjection(self, window):
       # Destroying widgets to have a blank window
       for widget in window.winfo_children():
