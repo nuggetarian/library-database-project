@@ -186,6 +186,7 @@ class DatabaseWindow():
             conn.commit()
             clearBoxes()
             conn.close()
+            c.close()
           #	Exception if we press delete without selecting, also contains a transaction rollback, log entry and a message is displayed on the screen
           except IndexError:  
             warningLabel = ttk.Label(warningGrid, text="          Nothing selected          ")
@@ -195,8 +196,6 @@ class DatabaseWindow():
 
       # Function to add a record
       def addRecord():
-        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-        c = conn.cursor()
         # Roles get a number assigned for easier manipulation of data
         role = 0
         if roleEntry.get() == "admin":
@@ -223,6 +222,8 @@ class DatabaseWindow():
         elif cityEntry.get() == "Wellesley":
           city = 5
         try:
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
           c.execute("""INSERT INTO public.user (user_id, first_name, last_name) VALUES (%s, %s, %s);""", 
                     (idEntry.get(), firstNameEntry.get(), lastNameEntry.get(),))
           c.execute("""INSERT INTO public.contact (user_id, mail) VALUES (%s, %s);""",
@@ -231,6 +232,10 @@ class DatabaseWindow():
                     (idEntry.get(), role,))
           c.execute("""INSERT INTO public.user_has_address (user_id, address_id) VALUES (%s, %s);""",
                     (idEntry.get(), city,))
+          conn.commit()
+          conn.close()
+          c.close()
+        # Exceptions that are logged, transaction rollback is applied and a relevant message is displayed
         except psycopg2.errors.UniqueViolation:
           conn.rollback()
           logging.warning('psycopg2.errors.UniqueViolation: Error Adding Record (Duplicate)')
@@ -243,8 +248,6 @@ class DatabaseWindow():
           conn.rollback()
           logging.warning('psycopg2.errors.ForeignKeyViolation')
           foreignKeyError = ttk.Label(warningGrid, text="      Foreign Key Violation      ").grid(row=0, column=0)
-
-        conn.commit()
         clearBoxes()
         conn.close()
         # Refresh of the treeview
@@ -253,9 +256,6 @@ class DatabaseWindow():
 
       # Function to update a record we select
       def updateRecord():
-        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-        c = conn.cursor()
-
         # Cities get a number assigned for easier manipulation of data
         city = 0
         if cityEntry.get() == "Jonesboro":
@@ -283,10 +283,15 @@ class DatabaseWindow():
           role = 5
         
         try:
+          conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+          c = conn.cursor()
           c.execute("""UPDATE public.user SET last_name = %s, first_name = %s WHERE user_id = %s;""", (lastNameEntry.get(),firstNameEntry.get(),idEntry.get(),))
           c.execute("""UPDATE public.contact SET mail = %s WHERE user_id = %s;""", (mailEntry.get(),idEntry.get(),))
           c.execute("""UPDATE public.user_has_address SET address_id = %s WHERE user_id = %s;""", (city,idEntry.get(),))
           c.execute("""UPDATE public.user_has_role SET role_id = %s WHERE user_id = %s AND role_id = %s;""", (role,idEntry.get(),roleset,))
+          conn.commit()
+          c.close()
+          conn.close()
         # Exceptions that are logged, transaction rollback is applied and a relevant message is displayed
         except psycopg2.errors.UniqueViolation:
           conn.rollback()
@@ -304,9 +309,7 @@ class DatabaseWindow():
           conn.rollback()
           logging.warning('NameError: Roleset not defined ')
           foreignKeyError = ttk.Label(warningGrid, text="      NameError: Roleset not defined      ").grid(row=0, column=0)
-        conn.commit()
         clearBoxes()
-        conn.close()
         # Refresh of the screen
         userTree.delete(*userTree.get_children())
         readDatabase()          
@@ -564,6 +567,7 @@ class DatabaseWindow():
             conn.commit()
             clearBoxes()
             conn.close()
+            c.close()
           # Exception that is logged, transaction rollback is applied and a message is displayed 	
           except IndexError:  
             warningLabel = ttk.Label(warningGrid, text="          Nothing selected          ")
@@ -586,6 +590,7 @@ class DatabaseWindow():
           c.execute("""INSERT INTO public.author_has_book (author_id, book_id) VALUES (%s, %s);""", (idEntry.get(), idEntry.get(),))
           conn.commit()
           conn.close()
+          c.close()
         # Exceptions that are logged, transaction rollback is applied and a message is displayed
         except psycopg2.errors.UniqueViolation:
           conn.rollback()
