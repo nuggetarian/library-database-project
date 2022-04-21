@@ -421,5 +421,4 @@ class DatabaseWindow():
       # When mouse button 1 is released, selectRecord function happens
       userTree.bind("<ButtonRelease-1>", selectRecord)
 
-      readDatabase()         
-
+      readDatabase()
