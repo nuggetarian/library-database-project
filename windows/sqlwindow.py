@@ -6,6 +6,7 @@ from windows.window import Window
 import logging
 
 # Class with SQL Injection playground
+# FOR SOME REASON THIS SQUASHES THE MAIN WINDOW A TINY BIT AND BOOKWINDOW CORRECTS IT
 class SqlWindow():
   def sqlInjection(self, window):
 
