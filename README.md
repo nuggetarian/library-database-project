@@ -72,6 +72,10 @@ You need to add this script to task scheduler and set it to midnight. There are 
 set PGPASSWORD=postgres
 pg_dump -h "localhost" -U "postgres" -f "C:\Windows\Temp\library" "librarydb"
 ```
+# Screenshots
+
+<img src="images/image1.png" width="331" height="351">
+<img src="images/image2.png" width="564" height="484">
 
 # Some Info
 
